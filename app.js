@@ -28,5 +28,5 @@ app.use("/", routers);
 // app.use(express.static("assets"));
 
 app.listen(3000, () => {
-  console.log("서버가 요청을 받을 준비가 됐어요");
+  console.log("3000번 포트에서 대기중!");
 });
