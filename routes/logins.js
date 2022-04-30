@@ -63,7 +63,7 @@ router.post("/signUp/emailCheck", async (req, res) => {
   });
   if (existUser.length) {
     res.status(400).send({
-      errorMessage: "이미 등록된 아이디입니다.",
+      errorMessage: "이미 등록된 이메일입니다.",
     });
     return;
   }
@@ -72,7 +72,7 @@ router.post("/signUp/emailCheck", async (req, res) => {
 //닉네임 중복 검사
 router.post("/signUp/nameCheck", async (req, res) => {
   const existUser = await User.findAll({
-    where: { userEmail },
+    where: { userName },
   });
 
   if (existUser.length) {
@@ -91,7 +91,7 @@ router.post("/login", async (req, res) => {
 
   if (!user) {
     res.status(400).send({
-      errorMessage: "닉네임 또는 패스워드를 확인해주세요.",
+      errorMessage: "아이디 또는 패스워드를 확인해주세요.",
     });
     return;
   }
