@@ -24,6 +24,8 @@ module.exports = (sequelize, DataTypes) => {
       userProfile: DataTypes.STRING,
       tag: DataTypes.STRING,
       contents: DataTypes.STRING,
+      startTime: DataTypes.STRING,
+      endTime: DataTypes.STRING,
     },
     {
       sequelize,
