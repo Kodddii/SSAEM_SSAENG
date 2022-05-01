@@ -10,14 +10,14 @@ const routers = require("./routes/logins");
 const app = express();
 // const port = 7000;
 
-//접속로그 확인
+// //접속로그 확인
 // const requestMiddleware = (req, res, next) => {
 //   console.log("Request URL:", req.originalUrl, "-", new Date());
 //   next();
 // };
 
 //미들웨어
-// app.use(cors());
+app.use(cors());
 app.use(express.json());
 // app.use(requestMiddleWare);
 app.use(express.urlencoded({ extended: false }));
