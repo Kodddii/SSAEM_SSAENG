@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
-const { sequelize } = require("../models");
+const {sequelize} = require('../models');
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable('Users', {
       userId: {
         allowNull: false,
         autoIncrement: true,
@@ -20,7 +20,7 @@ module.exports = {
       pwd: {
         type: Sequelize.STRING,
       },
-      userType: {
+      isTutor: {
         type: Sequelize.STRING,
       },
       userProfile: {
@@ -49,6 +49,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable('Users');
   },
 };
