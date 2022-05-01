@@ -16,6 +16,8 @@ router.post("/signUp", async (req, res) => {
     userProfile,
     tag,
     contents,
+    startTime,
+    endTime,
   } = req.body;
   console.log(2);
   //비밀번호 최소 문자 1, 숫자 1 포함 (8자리 이상) 정규식
@@ -52,6 +54,8 @@ router.post("/signUp", async (req, res) => {
     userProfile,
     tag,
     contents,
+    startTime,
+    endTime,
   });
   res.status(201).send({});
 });
