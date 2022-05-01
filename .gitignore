@@ -1,1 +1,8 @@
+#module
 node_modules
+
+#env
+.env
+
+#s3, mysql
+/config
