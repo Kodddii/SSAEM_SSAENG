@@ -8,7 +8,6 @@ const bodyParser = require("body-parser");
 const routers = require("./routes/logins");
 
 const app = express();
-// const port = 7000;
 
 // //접속로그 확인
 // const requestMiddleware = (req, res, next) => {
