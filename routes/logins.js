@@ -19,6 +19,19 @@ router.post('/signUp', async (req, res) => {
     startTime,
     endTime,
   } = req.body;
+  // if(isTutor){
+    // await Tutor.create({
+    //   userEmail,
+    //   pwd,
+    //   userName,
+    //   isTutor,
+    //   userProfile,
+    //   tag,
+    //   contents,
+    //   startTime,
+    //   endTime,
+    // });
+  //}
   console.log(2);
   //비밀번호 최소 문자 1, 숫자 1 포함 (8자리 이상) 정규식
   // const pwdValidation = /^(?=.*[A-Za-z])(?=.*\d)[\w]{8,}$/;
