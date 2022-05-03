@@ -21,14 +21,14 @@ router.post('/signUp', async (req, res) => {
   } = req.body;
   console.log(2);
   //비밀번호 최소 문자 1, 숫자 1 포함 (8자리 이상) 정규식
-  // const pwdValidation = /^(?=.*[A-Za-z])(?=.*\d)[\w]{8,}$/;
+  const pwdValidation = /^(?=.*[A-Za-z])(?=.*\d)[\w]{8,}$/;
 
-  // if (!pwdValidation.test(pwd)) {
-  //   res.status(400).send({
-  //     errorMessage: "비밀번호는 영문+숫자 조합으로 8자리 이상 사용해야합니다.",
-  //   });
-  //   return;
-  // }
+  if (!pwdValidation.test(pwd)) {
+    res.status(400).send({
+      errorMessage: '비밀번호는 영문+숫자 조합으로 8자리 이상 사용해야합니다.',
+    });
+    return;
+  }
   if (pwd !== pwdCheck) {
     res.status(400).send({
       errorMessage: '패스워드가 패스워드 확인란과 동일하지 않습니다.',
@@ -60,8 +60,10 @@ router.post('/signUp', async (req, res) => {
   res.status(201).send({});
 });
 console.log(3);
+
 //아이디 중복 검사
 router.post('/signUp/emailCheck', async (req, res) => {
+  const {userEmail} = req.body;
   const existUser = await User.findAll({
     where: {userEmail},
   });
@@ -75,6 +77,7 @@ router.post('/signUp/emailCheck', async (req, res) => {
 
 //닉네임 중복 검사
 router.post('/signUp/nameCheck', async (req, res) => {
+  const {userName} = req.body;
   const existUser = await User.findAll({
     where: {userName},
   });
@@ -107,13 +110,13 @@ router.post('/login', async (req, res) => {
 
 //유저 정보 불러오기
 router.get('/login/getUser', (req, res) => {
-  const {user} = res.locals;
-  console.log(user);
-  res.json(user);
+  const {Users} = req.headers;
+  console.log(Users);
+  res.json(Users);
 });
 
-//로그아웃
-// router.get("/login/logOut", logOut);
+// //로그아웃
+// router.get('/login/logOut', logOut);
 
 //   //사용자 인증 미들웨어
 //   const user = async (req, res) => {
