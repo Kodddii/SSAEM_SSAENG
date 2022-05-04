@@ -1,21 +1,26 @@
-<<<<<<< Updated upstream
 const express = require('express');
 const router = express.Router();
-const {User} = require('../models');
+const {Tutor} = require('../models');
+const {Tutee} = require('../models');
 const {Op} = require('sequelize');
 const jwt = require('jsonwebtoken');
+const middleware = require('../middlewares/auth-middleware');
 
 //회원가입
 router.post('/signUp', async (req, res) => {
   console.log(1);
   const {
     userEmail,
+    userName,
     pwd,
     pwdCheck,
-    userName,
     isTutor,
     userProfile,
     tag,
+    language1,
+    language2,
+    language3,
+    comment,
     contents,
     startTime,
     endTime,
@@ -36,44 +41,121 @@ router.post('/signUp', async (req, res) => {
     });
     return;
   }
-  const existUser = await User.findAll({
-    where: {
-      [Op.or]: [{userName}, {userEmail}],
-    },
-  });
-  if (existUser.length) {
-    res.status(400).send({
-      errorMessage: '이미 등록된 아이디 또는 이메일입니다.',
+  if (isTutor === true) {
+    const tutorEmail = userEmail;
+    const tutorName = userName;
+    const tutorProfile = userProfile;
+    console.log(3);
+    await Tutor.create({
+      tutorEmail,
+      tutorName,
+      pwd,
+      pwdCheck,
+      isTutor,
+      tutorProfile,
+      tag,
+      language1,
+      language2,
+      language3,
+      comment,
+      contents,
+      startTime,
+      endTime,
     });
-    return;
+    console.log(4);
+  } else {
+    const tuteeEmail = userEmail;
+    const tuteeName = userName;
+    const tuteeProfile = userProfile;
+    await Tutee.create({
+      tuteeEmail,
+      tuteeName,
+      pwd,
+      pwdCheck,
+      isTutor,
+      tuteeProfile,
+      tag,
+      language1,
+      language2,
+      language3,
+      comment,
+      contents,
+      startTime,
+      endTime,
+    });
   }
-  await User.create({
-    userEmail,
-    pwd,
-    userName,
-    isTutor,
-    userProfile,
-    tag,
-    contents,
-    startTime,
-    endTime,
-  });
   res.status(201).send({});
 });
+// const existTutor = await Tutor.findAll({
+//   where: {
+//     [Op.or]: [{tutorName}, {tutorEmail}],
+//   },
+// });
+// if (existTutor.length) {
+//   res.status(400).send({
+//     errorMessage: '이미 등록된 아이디 또는 이메일입니다.',
+//   });
+//   return;
+// }
+// await Tutor.create({
+//   tutorEmail,
+//   pwd,
+//   tutorName,
+//   isTutor,
+//   tutorProfile,
+//   tag,
+//   language1,
+//   language2,
+//   language3,
+//   comment,
+//   contents,
+//   startTime,
+//   endTime,
+// });
+// res.status(201).send({});
+
 console.log(3);
 
 //아이디 중복 검사
 router.post('/signUp/emailCheck', async (req, res) => {
   const {userEmail} = req.body;
-  const existUser = await User.findAll({
-    where: {userEmail},
+  const existTutor = await Tutor.findAll({
+    where: {tutorEmail},
   });
-  if (existUser.length) {
+  const existTutee = await Tutee.findAll({
+    where: {tuteeEmail: userEmail},
+  });
+  if (existTutor.length || existTutee.length) {
     res.status(400).send({
       errorMessage: '이미 등록된 이메일입니다.',
     });
     return;
+  } else {
+    res.status(200).send({
+      ok: '사용 가능한 이메일입니다.',
+    });
   }
+
+  // else {
+  //   res.status(200).send({
+  //     ok: '사용 가능한 이메일입니다.',
+  //   });
+  // }
+
+  // const {tuteeEmail} = req.body;
+  // const {existTutee} = await Tutee.findAll({
+  //   where: {tuteeEmail},
+  // });
+  // if (existTutee.length) {
+  //   res.status(400).send({
+  //     errorMessage: '이미 등록된 이메일입니다.',
+  //   });
+  //   return;
+  // } else {
+  //   res.status(200).send({
+  //     ok: '사용 가능한 이메일입니다.',
+  //   });
+  // }
 });
 
 //닉네임 중복 검사
@@ -110,10 +192,10 @@ router.post('/login', async (req, res) => {
 });
 
 //유저 정보 불러오기
-router.get('/login/getUser', (req, res) => {
-  const {Users} = req.headers;
-  console.log(Users);
-  res.json(Users);
+router.get('/login/getUser', middleware, (req, res) => {
+  const {user} = res.locals;
+  console.log(user);
+  res.json(user);
 });
 
 // //로그아웃
@@ -129,5 +211,3 @@ router.get('/login/getUser', (req, res) => {
 // });
 
 module.exports = router;
-=======
->>>>>>> Stashed changes
