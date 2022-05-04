@@ -1,42 +1,51 @@
 'use strict';
-
-const {sequelize} = require('../models');
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Users', {
-      userId: {
+    await queryInterface.createTable('Tutees', {
+      tuteeId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      userEmail: {
+      tuteeEmail: {
         type: Sequelize.STRING,
       },
-      userName: {
+      tuteeName: {
         type: Sequelize.STRING,
       },
       pwd: {
         type: Sequelize.STRING,
       },
       isTutor: {
-        type: Sequelize.STRING,
+        type: Sequelize.BOOLEAN,
       },
-      userProfile: {
+      tuteeProfile: {
         type: Sequelize.STRING,
       },
       tag: {
+        type: Sequelize.STRING,
+      },
+      language1: {
+        type: Sequelize.STRING,
+      },
+      language2: {
+        type: Sequelize.STRING,
+      },
+      language3: {
+        type: Sequelize.STRING,
+      },
+      comment: {
         type: Sequelize.STRING,
       },
       contents: {
         type: Sequelize.STRING,
       },
       startTime: {
-        type: sequelize.STRING,
+        type: Sequelize.STRING,
       },
       endTime: {
-        type: sequelize.STRING,
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
@@ -49,6 +58,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable('Tutees');
   },
 };

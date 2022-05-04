@@ -2,7 +2,7 @@
   "development": {
     "username": "admin",
     "password": "ssssadmin",
-    "database": "SSAEM-SSAENG",
+    "database": "yhsql",
     "host": "database-1.culzb1zpbi3v.ap-northeast-2.rds.amazonaws.com",
     "dialect": "mysql"
   },
