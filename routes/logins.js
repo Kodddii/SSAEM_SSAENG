@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 const express = require('express');
 const router = express.Router();
 const {User} = require('../models');
@@ -128,3 +129,5 @@ router.get('/login/getUser', (req, res) => {
 // });
 
 module.exports = router;
+=======
+>>>>>>> Stashed changes
