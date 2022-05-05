@@ -88,11 +88,11 @@ router.post('/signUp/emailCheck', async (req, res) => {
 
 //닉네임 중복 검사
 router.post('/signUp/nameCheck', async (req, res) => {
-  const existUser = await User.findAll({
+  const existUser1 = await User.findAll({
     where: {userName},
   });
-
-  if (existUser.length) {
+ 
+  if (existUser1.length) {
     res.status(400).send({
       errorMessage: '이미 등록된 닉네임입니다.',
     });
@@ -120,6 +120,14 @@ router.post('/login', async (req, res) => {
 
 //유저 정보 불러오기
 router.get('/login/getUser', (req, res) => {
+  // 프론트에서 토큰을쓰는방법
+  // 1. 로컬스토리지 => 토큰을 헤더에 담아서
+  // req.headers
+  // 2. 쿠키 => 아무요청을할때 항상 헤더에 토큰이 쿠키에담겨저
+  // const abc = req.headers.cookies
+  // abc = 'token=a;sdkfjsa;dfkj;dkf'  
+  // abc.split('=')[1]
+  // verify userName 
   const {user} = res.locals;
   console.log(user);
   res.json(user);

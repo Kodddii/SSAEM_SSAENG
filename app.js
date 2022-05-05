@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-const routers = require("./routes/logins");
-
+const loginRouter = require("./routes/logins");
+const reservationRouter = require("./routes/reservation")
 const app = express();
 
 // //접속로그 확인
@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 //라우터 연결
-app.use("/", routers);
+app.use("/", loginRouter, reservationRouter);
 
 // app.use(express.static("assets"));
 
