@@ -19,7 +19,7 @@ router.post('/addBooking/:userName',(req,res)=>{
     db.query(sql,datas,(err,rows)=>{
         if (err) {
             console.log(err);
-            res.status(201).send({ msg: 'fail' });
+            res.status(400).send({ msg: 'fail' });
         } else {
             res.status(201).send({ msg: 'success' });
         }
@@ -27,12 +27,12 @@ router.post('/addBooking/:userName',(req,res)=>{
 })
 
 // 선생님입장 예약된 리스트 불러오기 
-router.get('/getBooking/?userName=tutorName&tuteeName',(req,res,next)=>{
+router.get('/getBooking/',(req,res,)=>{
     console.log(req.query)
-    const tutorName = req.params.userName.split('&')[0]
-    const tuteeName = req.params.userName.split('&')[1]
-    const sql =`SELECT * FROM TimeTable WHERE Tutor_tutorName=${tutorName} ORDERED BY Tutor_tutorName  `
-    db.query(sql, (err,data)=>{
+    const tutorName = req.query.tutorName
+    const tuteeName = req.query.tuteeName
+    const sql =`SELECT * FROM TimeTable WHERE Tutor_tutorName=? ORDER BY Tutor_tutorName  `
+    db.query(sql, tutorName,(err,data)=>{
         if(err) {
             console.log(err);
         }else{

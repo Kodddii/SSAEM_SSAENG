@@ -7,17 +7,8 @@ const jwt = require('jsonwebtoken');
 //회원가입
 router.post('/signUp', async (req, res) => {
   console.log(1);
-  const {
-    userEmail,
-    pwd,
-    pwdCheck,
-    userName,
-    isTutor,
-    userProfile,
-    tag,
-    contents,
-    startTime,
-    endTime,
+  const {userEmail,pwd,pwdCheck,userName,
+    isTutor,userProfile,tag,contents,startTime,endTime,
   } = req.body;
   // if(isTutor){
     // await Tutor.create({
