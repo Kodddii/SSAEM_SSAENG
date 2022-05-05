@@ -19,6 +19,19 @@ router.post('/signUp', async (req, res) => {
     startTime,
     endTime,
   } = req.body;
+  // if(isTutor){
+    // await Tutor.create({
+    //   userEmail,
+    //   pwd,
+    //   userName,
+    //   isTutor,
+    //   userProfile,
+    //   tag,
+    //   contents,
+    //   startTime,
+    //   endTime,
+    // });
+  //}
   console.log(2);
   //비밀번호 최소 문자 1, 숫자 1 포함 (8자리 이상) 정규식
   const pwdValidation = /^(?=.*[A-Za-z])(?=.*\d)[\w]{8,}$/;
@@ -81,8 +94,8 @@ router.post('/signUp/nameCheck', async (req, res) => {
   const existUser = await User.findAll({
     where: {userName},
   });
-
-  if (existUser.length) {
+ 
+  if (existUser1.length) {
     res.status(400).send({
       errorMessage: '이미 등록된 닉네임입니다.',
     });
@@ -110,9 +123,17 @@ router.post('/login', async (req, res) => {
 
 //유저 정보 불러오기
 router.get('/login/getUser', (req, res) => {
-  const {Users} = req.headers;
-  console.log(Users);
-  res.json(Users);
+  // 프론트에서 토큰을쓰는방법
+  // 1. 로컬스토리지 => 토큰을 헤더에 담아서
+  // req.headers
+  // 2. 쿠키 => 아무요청을할때 항상 헤더에 토큰이 쿠키에담겨저
+  // const abc = req.headers.cookies
+  // abc = 'token=a;sdkfjsa;dfkj;dkf'  
+  // abc.split('=')[1]
+  // verify userName 
+  const {user} = res.locals;
+  console.log(user);
+  res.json(user);
 });
 
 // //로그아웃
