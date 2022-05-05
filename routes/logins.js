@@ -120,10 +120,14 @@ console.log(3);
 router.post('/signUp/emailCheck', async (req, res) => {
   const {userEmail} = req.body;
   const existTutor = await Tutor.findAll({
-    where: {tutorEmail},
+    where: {
+      [Op.or]: [{userEmail: tutorEmail}],
+    },
   });
   const existTutee = await Tutee.findAll({
-    where: {tuteeEmail: userEmail},
+    where: {
+      [Op.or]: [{userEmail: tuteeEmail}],
+    },
   });
   if (existTutor.length || existTutee.length) {
     res.status(400).send({
