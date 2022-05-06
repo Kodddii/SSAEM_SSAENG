@@ -4,7 +4,9 @@ const res = require('express/lib/response');
 const {CLIENT_FOUND_ROWS} = require('mysql/lib/protocol/constants/client');
 const jwt = require('jsonwebtoken');
 const db = require('../config');
-
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+let pwd2 
 //회원가입
 router.post('/signUp', async (req, res) => {
   console.log(1);
@@ -25,6 +27,7 @@ router.post('/signUp', async (req, res) => {
     endTime,
   } = req.body;
   console.log(2);
+  
   //비밀번호 최소 문자 1, 숫자 1 포함 (8자리 이상) 정규식
   const pwdValidation = /^(?=.*[A-Za-z])(?=.*\d)[\w]{8,}$/;
 
@@ -40,7 +43,7 @@ router.post('/signUp', async (req, res) => {
     });
     return;
   }
-
+                    
   // //userName 한글/영어대소문자/숫자/특문X(글자수: 6 ~ 20자 정규식
   // const nameValidation = /^(?=.*[A-Za-z])(?=.*\d)[\w]{8,}$/;
 
@@ -52,7 +55,7 @@ router.post('/signUp', async (req, res) => {
   //   return;
   // }
 
-  if (isTutor === true) {
+  if (isTutor) {
     const sql1 =
       'INSERT INTO Tutor (`userEmail`,`userName`,`pwd`,`isTutor`,`userProfile`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
     const datas1 = [
@@ -70,6 +73,15 @@ router.post('/signUp', async (req, res) => {
       startTime,
       endTime,
     ];
+    console.log(22)
+    bcrypt.hash(datas1[2], saltRounds, (err, hash) => {
+    if (err){
+      console.log(err)
+    } else {
+       datas1[2] = hash;
+    }
+    console.log(3)
+  })
     db.query(sql1, datas1, (err, row) => {
       if (err) {
         console.log(err);
@@ -78,6 +90,7 @@ router.post('/signUp', async (req, res) => {
       }
     });
   } else {
+    console.log(4)
     const sql2 =
       'INSERT INTO Tutee (`userEmail`,`userName`,`pwd`,`isTutor`,`userProfile`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
     const datas2 = [
@@ -95,6 +108,17 @@ router.post('/signUp', async (req, res) => {
       startTime,
       endTime,
     ];
+    console.log(5)
+    bcrypt.hash(datas2[2], saltRounds, (err, hash) => {
+    if (err){
+      console.log(err)
+    } else {
+      console.log(datas2[2])
+       datas2[2] = hash;
+       
+    }
+    console.log(6)
+
     db.query(sql2, datas2, (err, row) => {
       if (err) {
         console.log(err);
@@ -102,8 +126,11 @@ router.post('/signUp', async (req, res) => {
         res.status(200).send({msg: 'success'});
       }
     });
-  }
-});
+  }) 
+}
+})
+
+
     
 
 //이메일 중복 검사
@@ -129,7 +156,8 @@ router.post('/signUp/emailCheck', async (req, res) => {
     }
   });
 });
- 
+
+
 //닉네임 중복 검사
 router.post('/signUp/nameCheck', async (req, res) => {
   const {userName} = req.body;
@@ -153,25 +181,60 @@ router.post('/signUp/nameCheck', async (req, res) => {
     }
   });
 });
-    
+  
 
 //로그인
 router.post('/login', async (req, res) => {
-  // const login = async (req, res) => {
-  const {userEmail, pwd} = req.body;
-  const user = await User.findOne({where: {userEmail, pwd}});
+  const info = [req.body.userEmail, req.body.pwd];
+  const sql1 = 'SELECT * FROM Tutor WHERE userEmail=? AND pwd=?';
+  const sql2 = 'SELECT * FROM Tutee WHERE userEmail=? AND pwd=?';
 
-  if (!user) {
-    res.status(400).send({
-      errorMessage: '아이디 또는 패스워드를 확인해주세요.',
-    });
-    return;
-  }
-  const token = jwt.sign({userId: user.userId}, 'my-secret-key');
-  res.send({
-    token,
+  db.query(sql1, info[0], (err, datas1) => {
+    if (err) console.log(err);
   });
-});
+if (datas1.length > 0) {
+  bcrypt.compare(info[1], datas1[0].pwd, (err,result) => {
+    if (result) {
+      const userInfo = {
+        userName: datas1[0].userName,
+      };
+      const token = jwt.sign(
+                        { userId: data[0].userId },
+                        process.env.JWT_SECRET,
+                    );
+                    res.send({ msg: 'success', token, userInfo });
+                } else {
+                    console.log('pwd err');
+                    res.send({ msg: '로그인 실패' });
+                }
+            });
+        } else {
+          db.query(sql2, info[0], (err, datas2) => {
+            if (err) console.log(err);
+          });
+          if (datas2.length > 0) {
+            bcrypt.compare(info[1], datas2[0].pwd, (err, result) => {
+              if (result) {
+                const userInfo = {
+                  userName: datas2[0].userName,
+                };
+                const token = jwt.sign(
+                  {userId: data[0].userId},
+                  process.env.JWT_SECRET,
+                );
+                res.send({msg: 'success', token, userInfo});
+              } else {
+                console.log('pwd err');
+                res.send({msg: '로그인 실패'});
+              }
+            });
+          }
+            console.log('Id not found');
+            res.send({ msg: 'login failed' });
+    }
+  } )
+
+
 
 //유저 정보 불러오기
 router.get('/login/getUser', (req, res) => {
@@ -187,6 +250,7 @@ router.get('/login/getUser', (req, res) => {
   console.log(user);
   res.json(user);
 });
+    
 
 // //로그아웃
 // router.get('/login/logOut', logOut);
