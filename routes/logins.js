@@ -54,7 +54,7 @@ router.post('/signUp', async (req, res) => {
 
   if (isTutor === true) {
     const sql1 =
-      'INSERT INTO ON DUPLICATE KEY UPDATE Tutor (`userEmail`,`userName`,`pwd`,`isTutor`,`userProfile`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
+      'INSERT INTO (`userEmail`,`userName`,`pwd`,`isTutor`,`userProfile`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
     const datas1 = [
       userEmail,
       userName,
