@@ -54,7 +54,7 @@ router.post('/signUp', async (req, res) => {
 
   if (isTutor === true) {
     const sql1 =
-      'INSERT INTO (`userEmail`,`userName`,`pwd`,`isTutor`,`userProfile`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
+      'INSERT INTO Tutor (`userEmail`,`userName`,`pwd`,`isTutor`,`userProfile`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
     const datas1 = [
       userEmail,
       userName,
@@ -133,8 +133,7 @@ router.post('/signUp/emailCheck', async (req, res) => {
         }
      })
     }
-  });
-    
+  })  
 
 //닉네임 중복 검사
 router.post('/signUp/nameCheck', async (req, res) => {
@@ -164,8 +163,6 @@ router.post('/signUp/nameCheck', async (req, res) => {
     
 
    
-    
-
 //로그인
 router.post('/login', async (req, res) => {
   // const login = async (req, res) => {
