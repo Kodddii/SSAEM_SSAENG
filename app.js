@@ -9,8 +9,8 @@ const loginRouter = require("./routes/logins");
 const reservationRouter = require("./routes/reservation")
 const getLikeRouter = require("./routes/getLike")
 const app = express();
-const helmet = require('helmet') 
-app.use(helmet());
+// const helmet = require('helmet') 
+// app.use(helmet());
 // //접속로그 확인
 // const requestMiddleware = (req, res, next) => {
 //   console.log("Request URL:", req.originalUrl, "-", new Date());

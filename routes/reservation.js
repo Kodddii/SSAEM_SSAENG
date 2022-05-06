@@ -14,7 +14,7 @@ router.post('/addBooking/:userName',(req,res)=>{
     const Tutee_tuteeName = userName
     const datas = [start,end,Tutor_tutorName,Tutee_tuteeName]
 
-    const sql = 'INSERT INTO TimeTable (`startTime`,`endTime`,`Tutor_tutorName`,`Tutee_tuteeName`) VALUES (?,?,?,?)'
+    const sql = 'INSERT INTO TimeTable (`startTime`,`endTime`,`Tutor_userName`,`Tutee_userName`) VALUES (?,?,?,?)'
 
     db.query(sql,datas,(err,rows)=>{
         if (err) {
@@ -31,7 +31,7 @@ router.get('/getBooking/',(req,res,)=>{
     console.log(req.query)
     const tutorName = req.query.tutorName
     const tuteeName = req.query.tuteeName
-    const sql =`SELECT * FROM TimeTable WHERE Tutor_tutorName=? ORDER BY Tutor_tutorName  `
+    const sql =`SELECT * FROM TimeTable WHERE Tutor_userName=? ORDER BY Tutor_userName  `
     db.query(sql, tutorName,(err,data)=>{
         if(err) {
             console.log(err);
