@@ -81,7 +81,7 @@ router.post('/signUp', async (req, res) => {
        datas1[2] = hash;
     }
     console.log(3)
-  })
+
     db.query(sql1, datas1, (err, row) => {
       if (err) {
         console.log(err);
@@ -89,6 +89,11 @@ router.post('/signUp', async (req, res) => {
         res.status(200).send({msg: 'success'});
       }
     });
+
+
+
+  })
+    
   } else {
     console.log(4)
     const sql2 =
