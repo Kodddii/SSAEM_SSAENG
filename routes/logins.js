@@ -109,60 +109,52 @@ router.post('/signUp', async (req, res) => {
 //이메일 중복 검사
 router.post('/signUp/emailCheck', async (req, res) => {
   const {userEmail} = req.body;
-   if (isTutor === true) {
-     const sql1 = 'select * from Tutor where userEmail=?'
-     db.query(sql1, [userEmail], (err, datas1) => {
-       if (datas1.length === 0) {
-            console.log(err);
-            res.send({ msg: 'success' });
-        } else {
-            res.send({ msg: '이미 있는 이메일 주소입니다.' });
-        }
+  const sql1 = 'SELECT * FROM Tutor WHERE userEmail=?';
+  const sql2 = 'SELECT * FROM Tutee WHERE userEmail=?';
+  db.query(sql1, userEmail, (err, datas1) => {
+    if (err) {
+      console.log(err);
+    } else {
+      if (!datas1.length) {
+        db.query(sql2, userEmail, (err, datas2) => {
+          if (!datas2.length) {
+            res.send({msg: 'success'});
+          } else {
+            res.send({msg: '이미 있는 이메일 주소입니다.'});
+          }
+        });
+      } else {
+        res.send({msg: '이미 있는 이메일 주소입니다.'});
       }
-     )
-
-    } else if (isTutor === false) {
-     const sql2 = 'select * from Tutee where userEmail=?'
-
-     db.query(sql2, [userEmail], (err, datas2) => {
-       if (datas2.length === 0) {
-            console.log(err);
-            res.send({ msg: 'success' });
-        } else {
-            res.send({ msg: '이미 있는 이메일 주소입니다.'});
-        }
-     })
     }
-  })  
-
+  });
+});
+ 
 //닉네임 중복 검사
 router.post('/signUp/nameCheck', async (req, res) => {
   const {userName} = req.body;
-  if (isTutor === true) {
-    const sql1 = 'select * from Tutor where userName=?';
-    db.query(sql1, [userName], (err, datas1) => {
-      if (datas1.length === 0) {
-        console.log(err);
-        res.send({msg: 'success'});
+  const sql1 = 'SELECT * FROM Tutor WHERE userName=?';
+  const sql2 = 'SELECT * FROM Tutee WHERE userName=?';
+  db.query(sql1, userName, (err, datas1) => {
+    if (err) {
+      console.log(err);
+    } else {
+      if (!datas1.length) {
+        db.query(sql2, userName, (err, datas2) => {
+          if (!datas2.length) {
+            res.send({msg: 'success'});
+          } else {
+            res.send({msg: '이미 있는 닉네임입니다.'});
+          }
+        });
       } else {
         res.send({msg: '이미 있는 닉네임입니다.'});
       }
-    });
-  } else if (isTutor === false) {
-    const sql2 = 'select * from Tutee where userName=?';
-    db.query(sql2, [userName], (err, datas2) => {
-      if (datas2.length === 0) {
-        console.log(err);
-        res.send({msg: 'success'});
-      } else {
-        res.send({msg: '이미 있는 닉네임입니다.'});
-      }
-    });
-  }
+    }
+  });
 });
     
 
-   
 //로그인
 router.post('/login', async (req, res) => {
   // const login = async (req, res) => {
