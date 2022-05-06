@@ -5,6 +5,11 @@ const {Op} = require('sequelize');
 const jwt = require('jsonwebtoken');
 
 //회원가입
+//db.query(sql,data,(err,row))
+
+
+
+
 router.post('/signUp', async (req, res) => {
   console.log(1);
   const {userEmail,pwd,pwdCheck,userName,
