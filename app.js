@@ -14,7 +14,8 @@ const session = require('express-session');
 const passportConfig = require('./passport');
 const reviewRouter = require('./routes/review');
 const authRouter = require('./routes/auth')
-
+const app_low = express();
+const app = express();
 
 passportConfig();
 // app.set('port', 3000);
@@ -45,8 +46,7 @@ const fs = require("fs")
 const http = require("http")
 const https = require("https")
 const SocketIO = require("socket.io")
-const app_low = express();
-const app = express();
+
 
 //////////////////////////////////////////////////////////////////
 // https 인증관련
