@@ -6,7 +6,9 @@ const jwt = require('jsonwebtoken');
 const db = require('../config');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-let pwd2 
+const authmiddleware = require('../middlewares/auth-middleware')
+
+
 //회원가입
 router.post('/signUp', async (req, res) => {
   console.log(1);
@@ -256,7 +258,7 @@ router.post('/login', async (req, res) => {
 
 
 //유저 정보 불러오기
-router.get('/login/getUser', (req, res) => {
+router.get('/getUser', authmiddleware, (req, res) => {
   // 프론트에서 토큰을쓰는방법
   // 1. 로컬스토리지 => 토큰을 헤더에 담아서
   // req.headers
