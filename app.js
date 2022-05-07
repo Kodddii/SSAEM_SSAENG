@@ -1,10 +1,8 @@
 require("dotenv").config();
 const express = require("express");
-const { Op } = require("sequelize");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-
 const loginRouter = require("./routes/logins");
 const reservationRouter = require("./routes/reservation")
 const getLikeRouter = require("./routes/getLike")

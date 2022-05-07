@@ -10,4 +10,5 @@ const db = mysql.createConnection({
 });
 
 db.connect();
+console.log("dbbbbb")
 module.exports=db

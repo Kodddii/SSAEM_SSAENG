@@ -4,10 +4,10 @@ const res = require('express/lib/response');
 const middleware = require('../middlewares/auth-middleware');
 const {CLIENT_FOUND_ROWS} = require('mysql/lib/protocol/constants/client');
 const jwt = require('jsonwebtoken');
-const db = require('../config');
+const db = require('../config.js');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-const authmiddleware = require('../middlewares/auth-middleware')
+const authmiddleware = require('../middlewares/auth-middleware');
 
 
 //회원가입
@@ -202,6 +202,7 @@ router.post('/login', async (req, res) => {
             bcrypt.compare(pwd, datas1[0].pwd, (err,result) => {
               if (result) {
                 const userInfo = {
+                  isTutor: datas1[0].isTutor,
                   userName: datas1[0].userName,
                 };
                 const token = jwt.sign(
@@ -222,6 +223,7 @@ router.post('/login', async (req, res) => {
           bcrypt.compare(pwd, datas2[0].pwd, (err, result) => {
             if (result) {
               const userInfo = {
+                isTutor: datas2[0].isTutor,
                 userName: datas2[0].userName,
               };
               const token = jwt.sign(
@@ -247,8 +249,19 @@ router.post('/login', async (req, res) => {
 
 
 //유저 정보 불러오기
-// router.get('/login/getUser', middleware (req, res) => {
-  // 프론트에서 토큰을쓰는방법
+router.get('/login/getUser', middleware, async (req, res) => {
+  const { user } = res.locals;
+  console.log(user.userName);
+  res.send({
+    userName: user.userName,
+    isTutor: user.isTutor,
+    userProfile: user.userProfile,
+    tag: user.tag,
+    comment: user.comment,
+  });
+});
+
+// 프론트에서 토큰을쓰는방법
   // 1. 로컬스토리지 => 토큰을 헤더에 담아서
   // req.headers
   // 2. 쿠키 => 아무요청을할때 항상 헤더에 토큰이 쿠키에담겨저
@@ -256,10 +269,6 @@ router.post('/login', async (req, res) => {
   // abc = 'token=a;sdkfjsa;dfkj;dkf'
   // abc.split('=')[1]
   // verify userName
-//   const {user} = res.locals;
-//   console.log(user);
-//   res.json(user);
-// });
     
 
 // //로그아웃
