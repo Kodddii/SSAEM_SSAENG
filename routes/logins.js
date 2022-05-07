@@ -7,7 +7,9 @@ const jwt = require('jsonwebtoken');
 const db = require('../config');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-let pwd2 
+const authmiddleware = require('../middlewares/auth-middleware')
+
+
 //회원가입
 router.post('/signUp', async (req, res) => {
   console.log(1);
@@ -186,39 +188,38 @@ router.post('/signUp/nameCheck', async (req, res) => {
 
 //로그인
 router.post('/login', async (req, res) => {
-  const info = [req.body.userEmail, req.body.pwd];
-  console.log(info)
-  const sql1 = 'SELECT * FROM Tutor WHERE userEmail=? AND pwd=?';
-  const sql2 = 'SELECT * FROM Tutee WHERE userEmail=? AND pwd=?';
+  const {userEmail, pwd} = req.body
+  // const info = [req.body.userEmail, req.body.pwd];
+  // console.log(info)
+  const sql1 = 'SELECT * FROM Tutor WHERE userEmail=?';
+  const sql2 = 'SELECT * FROM Tutee WHERE userEmail=?';
 
-  db.query(sql1, info, (err, datas1) => {
-    if (err) {
-      console.log(err);
-    }else if(datas1.length){
-      console.log(datas1)
-      console.log(datas1[0].pwd)
-      bcrypt.compare(info[1], datas1[0].pwd, (err,result) => {
-      if (result) {
-        const userInfo = {
-          userName: datas1[0].userName,
-        };
-        const token = jwt.sign(
-                          { userName: datas1[0].userName },
-                          process.env.JWT_SECRET,
-                      );
-                      res.send({ msg: 'success', token, userInfo });
-      } else {
-        console.log('pwd err');
-        res.send({ msg: '로그인 실패' });
-      }
-      });
+  db.query(sql1, userEmail, (err, datas1) => {
+    if (err) console.log(err);
+    if(datas1.length){
+            console.log(datas1)
+            // console.log(datas1[0].pwd)
+            bcrypt.compare(pwd, datas1[0].pwd, (err,result) => {
+              if (result) {
+                const userInfo = {
+                  userName: datas1[0].userName,
+                };
+                const token = jwt.sign(
+                                { userName: datas1[0].userName },
+                                process.env.JWT_SECRET,
+                            );
+                res.send({ msg: 'success', token, userInfo });
+            } else {
+              console.log('pwd err');
+              res.send({ msg: '로그인 실패' });
+            }
+            });
     }else{
-      db.query(sql2, info, (err, datas2) => {
-        if (err) {
-          console.log(err);
+      db.query(sql2, userEmail, (err, datas2) => {
+        if (err) console.log(err);
         
-        }else if (datas2.length) {
-          bcrypt.compare(info[1], datas2[0].pwd, (err, result) => {
+        if (datas2.length) {
+          bcrypt.compare(pwd, datas2[0].pwd, (err, result) => {
             if (result) {
               const userInfo = {
                 userName: datas2[0].userName,
@@ -233,9 +234,10 @@ router.post('/login', async (req, res) => {
               res.send({msg: '로그인 실패'});
             }
           });
+        }else{
+        console.log('Id not found');
+        res.send({ msg: 'login failed' });
         }
-          console.log('Id not found');
-          res.send({ msg: 'login failed' });
       }
     );
     }
