@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config');
+const middleware = require('../middlewares/auth-middleware')
 // const authMiddleare = require('../middlewares/auth');
 ///
 // 리뷰 불러오기(조회)
@@ -20,14 +21,12 @@ router.get('/getReview/:tutor_userName', async (req, res) => {
 });
 
 // 리뷰 작성
-router.post('/addReview', async (req, res) => {
-  // const { tutee_userName, rate, text } = req.body;
-  // const { token } = res.locals;
-  const { tutor_userName, tutee_userName, rate, text } = req.body;
-  // const reviewId = Math.floor(Math.random() * (2147483647)) + 1;
-  console.log(req.body);
+router.post('/addReview', middleware, async (req, res) => {
+  const tutee_userName = res.locals.user.userName;
+  const { tutor_userName, rate, text } = req.body;
+  // console.log(tutee_userName, req.body);
   const param = [tutor_userName, tutee_userName, rate, text];
-  console.log(param)
+  // console.log(param)
   db.query(
     'INSERT INTO `Review`(`tutor_userName`, `tutee_userName`, `rate`, `text`) VALUES (?,?,?,?)',
     param,
@@ -42,9 +41,10 @@ router.post('/addReview', async (req, res) => {
 });
 
 // 리뷰 수정
-router.patch('/editReview', async (req, res) => {
-  // const { token } = res.locals;
-  const { tutee_userName, reviewId, rate, text } = req.body;
+router.patch('/editReview', middleware, async (req, res) => {
+  const tutee_userName = res.locals.user.userName;
+  const { reviewId, rate, text } = req.body;
+  console.log(tutee_userName, req.body)
   const sql = 'SELECT * FROM Review WHERE tutee_userName=?'
   db.query(sql, [tutee_userName], (err, rows) => {
     if (rows.length !== 0) {
@@ -62,9 +62,9 @@ router.patch('/editReview', async (req, res) => {
 });
 
 // 리뷰 삭제
-router.delete('/deleteReview', async (req, res) => {
-  // const { token } = res.locals;
-  const { tutee_userName, reviewId } = req.body;
+router.delete('/deleteReview', middleware, async (req, res) => {
+  const tutee_userName = res.locals.user.userName;
+  const { reviewId } = req.body;
   const sql = 'SELECT * FROM Review WHERE tutee_userName=?'
   db.query(sql, [tutee_userName], (err, rows) => {
     if (rows.length !== 0) {
