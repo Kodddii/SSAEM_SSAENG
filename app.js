@@ -13,7 +13,6 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportConfig = require('./passport');
 const reviewRouter = require('./routes/review');
-const bodyParser = require('body-parser');
 const authRouter = require('./routes/auth')
 
 const app = express();
