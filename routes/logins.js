@@ -191,6 +191,7 @@ router.post('/signUp/nameCheck', async (req, res) => {
 //로그인
 router.post('/login', async (req, res) => {
   const info = [req.body.userEmail, req.body.pwd];
+  console.log(info)
   const sql1 = 'SELECT * FROM Tutor WHERE userEmail=? AND pwd=?';
   const sql2 = 'SELECT * FROM Tutee WHERE userEmail=? AND pwd=?';
 
@@ -198,6 +199,8 @@ router.post('/login', async (req, res) => {
     if (err) {
       console.log(err);
     }else if(datas1.length){
+      console.log(datas1)
+      console.log(datas1[0].pwd)
       bcrypt.compare(info[1], datas1[0].pwd, (err,result) => {
       if (result) {
         const userInfo = {
@@ -230,7 +233,7 @@ router.post('/login', async (req, res) => {
               );
               res.send({msg: 'success', token, userInfo});
             } else {
-              console.log('pwd err');
+              console.log('여기다여기');
               res.send({msg: '로그인 실패'});
             }
           });
