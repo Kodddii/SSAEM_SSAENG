@@ -5,10 +5,12 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-const routers = require("./routes/logins");
-
+const loginRouter = require("./routes/logins");
+const reservationRouter = require("./routes/reservation")
+const getLikeRouter = require("./routes/getLike")
 const app = express();
-
+// const helmet = require('helmet') 
+// app.use(helmet());
 // //접속로그 확인
 // const requestMiddleware = (req, res, next) => {
 //   console.log("Request URL:", req.originalUrl, "-", new Date());
@@ -22,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 //라우터 연결
-app.use("/", routers);
+app.use("/", loginRouter, reservationRouter,getLikeRouter);
 
 // app.use(express.static("assets"));
 
