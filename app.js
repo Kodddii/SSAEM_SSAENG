@@ -73,11 +73,6 @@ const io = SocketIO(httpsServer, {
 });
 /////////////////////////////////////////////////////////
 
-// Router
-const loginRouter = require("./routes/logins");
-const reservationRouter = require("./routes/reservation")
-const getLikeRouter = require("./routes/getLike")
-
 // const helmet = require('helmet') 
 // app.use(helmet());
 // //접속로그 확인
