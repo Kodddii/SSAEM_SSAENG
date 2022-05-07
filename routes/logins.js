@@ -82,7 +82,7 @@ router.post('/signUp', async (req, res) => {
        datas1[2] = hash;
     }
     console.log(3)
-  })
+
     db.query(sql1, datas1, (err, row) => {
       if (err) {
         console.log(err);
@@ -90,6 +90,11 @@ router.post('/signUp', async (req, res) => {
         res.status(200).send({msg: 'success'});
       }
     });
+
+
+
+  })
+    
   } else {
     console.log(4)
     const sql2 =
@@ -185,54 +190,67 @@ router.post('/signUp/nameCheck', async (req, res) => {
 //로그인
 router.post('/login', async (req, res) => {
   const info = [req.body.userEmail, req.body.pwd];
+  console.log(info)
   const sql1 = 'SELECT * FROM Tutor WHERE userEmail=? AND pwd=?';
   const sql2 = 'SELECT * FROM Tutee WHERE userEmail=? AND pwd=?';
-  const datas1 = 
-  db.query(sql1, info[0], (err, datas1) => {
-    if (err) console.log(err);
-  }
-  );
-if (datas1.length > 0) {
-  bcrypt.compare(info[1], datas1[0].pwd, (err,result) => {
-    if (result) {
-      const userInfo = {
-        userName: datas1[0].userName,
-      };
-      const token = jwt.sign(
-                        { userId: data[0].userId },
-                        process.env.JWT_SECRET,
-                    );
-                    res.send({ msg: 'success', token, userInfo });
-                } else {
-                    console.log('pwd err');
-                    res.send({ msg: '로그인 실패' });
-                }
-            });
-        } else {
-          db.query(sql2, info[0], (err, datas2) => {
-            if (err) console.log(err);
+
+  db.query(sql1, info, (err, datas1) => {
+    if (err) {
+      console.log(err);
+    }else if(datas1.length){
+      console.log(datas1)
+      console.log(datas1[0].pwd)
+      bcrypt.compare(info[1], datas1[0].pwd, (err,result) => {
+      if (result) {
+        const userInfo = {
+          userName: datas1[0].userName,
+        };
+        const token = jwt.sign(
+                          { userName: datas1[0].userName },
+                          process.env.JWT_SECRET,
+                      );
+                      res.send({ msg: 'success', token, userInfo });
+      } else {
+        console.log('pwd err');
+        res.send({ msg: '로그인 실패' });
+      }
+      });
+    }else{
+      db.query(sql2, info, (err, datas2) => {
+        if (err) {
+          console.log(err);
+        
+        }else if (datas2.length) {
+          bcrypt.compare(info[1], datas2[0].pwd, (err, result) => {
+            if (result) {
+              const userInfo = {
+                userName: datas2[0].userName,
+              };
+              const token = jwt.sign(
+                {userName: datas2[0].userName},
+                process.env.JWT_SECRET,
+              );
+              res.send({msg: 'success', token, userInfo});
+            } else {
+              console.log('여기다여기');
+              res.send({msg: '로그인 실패'});
+            }
           });
-          if (datas2.length > 0) {
-            bcrypt.compare(info[1], datas2[0].pwd, (err, result) => {
-              if (result) {
-                const userInfo = {
-                  userName: datas2[0].userName,
-                };
-                const token = jwt.sign(
-                  {userId: data[0].userId},
-                  process.env.JWT_SECRET,
-                );
-                res.send({msg: 'success', token, userInfo});
-              } else {
-                console.log('pwd err');
-                res.send({msg: '로그인 실패'});
-              }
-            });
-          }
-            console.log('Id not found');
-            res.send({ msg: 'login failed' });
+        }
+          console.log('Id not found');
+          res.send({ msg: 'login failed' });
+      }
+    );
+      
+
     }
-  } )
+
+
+
+    
+  });
+
+})
 
 
 
