@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config');
 // const authMiddleare = require('../middlewares/auth');
-
+///
 // 리뷰 불러오기(조회)
 router.get('/getReview/:tutor_name', async (req, res) => {
   const { tutor_name } = req.params;
