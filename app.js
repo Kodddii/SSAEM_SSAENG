@@ -42,6 +42,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// const helmet = require('helmet') 
+// app.use(helmet());
 // //접속로그 확인
 // const requestMiddleware = (req, res, next) => {
 //   console.log("Request URL:", req.originalUrl, "-", new Date());

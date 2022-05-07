@@ -16,7 +16,7 @@ router.patch('/like',(req,res)=>{
             console.log('success')
         }
     })
-    const sql2 = 'INSERT INTO `Like` (`Tutee_tuteeName`,`Tutor_tutorName`) VALUES (?,?)'
+    const sql2 = 'INSERT INTO `Like` (`Tutee_userName`,`Tutor_userName`) VALUES (?,?)'
     const data2 = [userName,tutorName]
     db.query(sql2, data2, (err2,rows2)=>{
         if(err2){
@@ -41,7 +41,7 @@ router.patch('/unlike',(req,res)=>{
             console.log('success')
         }
     })
-    const sql2 = 'DELETE FROM `Like` WHERE Tutee_tuteeName=? AND Tutor_tutorName=?'
+    const sql2 = 'DELETE FROM `Like` WHERE Tutee_userName=? AND Tutor_userName=?'
     // DELETE FROM [Table명] WHERE [Field명] = [조건 값]
 
 
@@ -56,4 +56,8 @@ router.patch('/unlike',(req,res)=>{
         }
     })
 })
+
+// router.get('/')
+
+
 module.exports=router

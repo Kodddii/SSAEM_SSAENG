@@ -6,15 +6,15 @@ const db = require('../config');
 
 
 // 예약
-router.post('/addBooking/:userName',(req,res)=>{
-    console.log(req.body)
+router.post('/addBooking/',(req,res)=>{
+   
     const {userName,start,end} = req.body;
-    console.log(req.params)
-    const Tutor_tutorName = req.params.userName
+    const Tutor_tutorName= req.query.userName
+    // const Tutor_tutorName = req.params.userName
     const Tutee_tuteeName = userName
     const datas = [start,end,Tutor_tutorName,Tutee_tuteeName]
 
-    const sql = 'INSERT INTO TimeTable (`startTime`,`endTime`,`Tutor_tutorName`,`Tutee_tuteeName`) VALUES (?,?,?,?)'
+    const sql = 'INSERT INTO TimeTable (`startTime`,`endTime`,`Tutor_userName`,`Tutee_userName`) VALUES (?,?,?,?)'
 
     db.query(sql,datas,(err,rows)=>{
         if (err) {
@@ -26,12 +26,12 @@ router.post('/addBooking/:userName',(req,res)=>{
     } )
 })
 
-// 선생님입장 예약된 리스트 불러오기 
+//  예약된 리스트 불러오기 
 router.get('/getBooking/',(req,res,)=>{
     console.log(req.query)
     const tutorName = req.query.tutorName
     const tuteeName = req.query.tuteeName
-    const sql =`SELECT * FROM TimeTable WHERE Tutor_tutorName=? ORDER BY Tutor_tutorName  `
+    const sql =`SELECT * FROM TimeTable WHERE Tutor_userName=? ORDER BY Tutor_userName  `
     db.query(sql, tutorName,(err,data)=>{
         if(err) {
             console.log(err);
@@ -41,10 +41,18 @@ router.get('/getBooking/',(req,res,)=>{
     })
 })
 
-// 예약리스트 개수 불러오기 
-// router.get('/getBookingCnt',(req,res)=>{
-//     const token = req.headers 
-
+//예약리스트 개수 불러오기 
+router.get('/getBookingCnt',(req,res)=>{
+    const sql = `SELECT COUNT (*) FROM TimeTable`
+    db.query(sql,(err,data)=>{
+        if(err){
+            console.log(err)
+        }else{
+            console.log(data)
+            res.status(200).send({msg:'success', data})
+        }
+    })
+})
 // })
 
 // {
