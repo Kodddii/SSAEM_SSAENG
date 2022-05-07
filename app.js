@@ -6,7 +6,7 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportConfig = require('./passport');
-const Review = require('./routes/review');
+const reviewRouter = require('./routes/review');
 const bodyParser = require('body-parser');
 const authRouter = require('./routes/auth')
 
@@ -38,9 +38,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 //* 라우터
-app.use('/auth', authRouter);
+app.use('/', authRouter, reviewRouter);
 
-app.use('/', Review)
+// app.use('/', reviewRouter)
 
 app.get('/', function (req, res) {
   res.send('메인페이지 입니다!!!')

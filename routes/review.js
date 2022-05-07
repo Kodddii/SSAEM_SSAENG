@@ -58,8 +58,8 @@ router.patch('/editReview', async (req, res) => {
         }
       })
     }
-  })
-})
+  });
+});
 
 // 리뷰 삭제
 router.delete('/deleteReview', async (req, res) => {
@@ -68,19 +68,23 @@ router.delete('/deleteReview', async (req, res) => {
   const sql = 'SELECT * FROM review WHERE tutee_name=?'
   db.query(sql, [tutee_name], (err, rows) => {
     if (rows.length !== 0) {
+      console.log(rows)
       const sql = 'DELETE FROM review WHERE reviewId=?'
 
       db.query(sql, [reviewId], (err, data) => {
-        if (err) {
+        if (data == undefined) {
           console.log(err);
+          console.log(data);
+          res.send({ msg: 'fail' })
         } else {
+          console.log(data)
           res.send({ msg: 'success' })
         }
       })
     } else {
       res.send({ msg: 'fail' })
     }
-  })
-})
+  });
+});
 
 module.exports = router;
