@@ -29,16 +29,35 @@ router.post('/addBooking/',(req,res)=>{
 //  예약된 리스트 불러오기 
 router.get('/getBooking/',(req,res,)=>{
     console.log(req.query)
-    const tutorName = req.query.tutorName
-    const tuteeName = req.query.tuteeName
-    const sql =`SELECT * FROM TimeTable WHERE Tutor_userName=? ORDER BY Tutor_userName  `
-    db.query(sql, tutorName,(err,data)=>{
+    const userName = req.query.userName
+    const isTutor = req.query.isTutor
+    if (isTutor){
+        const sql1 =`SELECT * FROM TimeTable WHERE Tutor_userName=? ORDER BY Tutor_userName  `
+        db.query(sql1, userName, (err,datas1)=>{
         if(err) {
             console.log(err);
         }else{
-            res.status(201).send({msg:'success', data})
+            res.status(201).send({msg:'success', data1})
         }
     })
+    }else{
+        const sql2 =`SELECT * FROM TimeTable WHERE Tutee_userName=? ORDER BY Tutee_userName  `
+        db.query(sql2, userName, (err,data2)=>{
+        if(err) {
+            console.log(err);
+        }else{
+            res.status(201).send({msg:'success', data2})
+        }
+    })
+    }
+    // const sql =`SELECT * FROM TimeTable WHERE Tutor_userName=? ORDER BY Tutor_userName  `
+    // db.query(sql, tutorName,(err,data)=>{
+    //     if(err) {
+    //         console.log(err);
+    //     }else{
+    //         res.status(201).send({msg:'success', data})
+    //     }
+    // })
 })
 
 //예약리스트 개수 불러오기 
