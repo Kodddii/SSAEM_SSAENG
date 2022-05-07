@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const res = require('express/lib/response');
+const middleware = require('../middlewares/auth-middleware');
 const {CLIENT_FOUND_ROWS} = require('mysql/lib/protocol/constants/client');
 const jwt = require('jsonwebtoken');
 const db = require('../config');
@@ -129,8 +130,6 @@ router.post('/signUp', async (req, res) => {
   }) 
 }
 })
-
-
     
 
 //이메일 중복 검사
@@ -188,10 +187,11 @@ router.post('/login', async (req, res) => {
   const info = [req.body.userEmail, req.body.pwd];
   const sql1 = 'SELECT * FROM Tutor WHERE userEmail=? AND pwd=?';
   const sql2 = 'SELECT * FROM Tutee WHERE userEmail=? AND pwd=?';
-
+  const datas1 = 
   db.query(sql1, info[0], (err, datas1) => {
     if (err) console.log(err);
-  });
+  }
+  );
 if (datas1.length > 0) {
   bcrypt.compare(info[1], datas1[0].pwd, (err,result) => {
     if (result) {
@@ -237,7 +237,7 @@ if (datas1.length > 0) {
 
 
 //유저 정보 불러오기
-router.get('/login/getUser', (req, res) => {
+// router.get('/login/getUser', middleware (req, res) => {
   // 프론트에서 토큰을쓰는방법
   // 1. 로컬스토리지 => 토큰을 헤더에 담아서
   // req.headers
@@ -246,10 +246,10 @@ router.get('/login/getUser', (req, res) => {
   // abc = 'token=a;sdkfjsa;dfkj;dkf'
   // abc.split('=')[1]
   // verify userName
-  const {user} = res.locals;
-  console.log(user);
-  res.json(user);
-});
+//   const {user} = res.locals;
+//   console.log(user);
+//   res.json(user);
+// });
     
 
 // //로그아웃

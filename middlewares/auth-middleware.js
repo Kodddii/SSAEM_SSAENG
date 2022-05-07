@@ -12,9 +12,9 @@ module.exports = (req, res, next) => {
   }
 
   try {
-    const { userId } = jwt.verify(authToken, process.env.JWT_SECRET);
-    console.log({ userId });
-    User.findByPk({ userId }).then((user) => {
+    const { userName } = jwt.verify(authToken, process.env.JWT_SECRET);
+    console.log({ userName });
+    User.findByPk({ userName }).then((user) => {
       res.locals.user = user;
       next();
     });
