@@ -160,7 +160,7 @@ io.on("connection", (socket) => {
 	socket.on('sendingSignal',({signal, roomName})=>{
 		console.log(3)
 		console.log({signal,roomName})
-		io.to(roomName).emit("offer",{signal, roomName, stream})
+		io.to(roomName).emit("offer",{signal, roomName})
 		console.log(3.5)
 		
 	  })
