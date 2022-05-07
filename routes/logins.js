@@ -90,9 +90,6 @@ router.post('/signUp', async (req, res) => {
         res.status(200).send({msg: 'success'});
       }
     });
-
-
-
   })
     
   } else {
@@ -227,9 +224,9 @@ router.post('/login', async (req, res) => {
                 userName: datas2[0].userName,
               };
               const token = jwt.sign(
-                {userName: datas2[0].userName},
+                { userName: datas2[0].userName },
                 process.env.JWT_SECRET,
-              );
+                );
               res.send({msg: 'success', token, userInfo});
             } else {
               console.log('여기다여기');
@@ -241,15 +238,8 @@ router.post('/login', async (req, res) => {
           res.send({ msg: 'login failed' });
       }
     );
-      
-
     }
-
-
-
-    
   });
-
 })
 
 
