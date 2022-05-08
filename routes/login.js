@@ -310,6 +310,18 @@ router.patch('/editUser', async (req, res) => {
   }
 })
     
+
+
+//필수정보 수정(pwd)
+
+
+
+
+
+
+
+
+
 //   }const sql1 = 'UPDATE Tutor SET userName WHERE userName=?'
 //       db.query(sql1, userName, (err, datas1) => {
 //         if (err) console.log(err);
