@@ -8,13 +8,13 @@ const middleware = require('../middlewares/auth-middleware')
 // 리뷰 전체 불러오기(메인화면)
 router.get('/getReview', async (req, res) => {
   const sql = "SELECT * FROM Review ORDER BY tutor_userName"
-  db.query(sql, (err, datas) => {
+  db.query(sql, (err, data) => {
     if (err) {
       console.log(err);
       res.send({ msg: 'fail' });
     } else {
-      console.log(datas);
-      res.send({ msg: 'success', datas});
+      console.log(data);
+      res.send({data});
     }
   })
 })
@@ -23,13 +23,13 @@ router.get('/getReview/:tutor_userName', async (req, res) => {
   const { tutor_userName } = req.params;
   console.log(req.params);
   const sql = "SELECT * FROM Review WHERE tutor_userName=? ORDER BY createdAt DESC"
-  db.query(sql, [tutor_userName], (err, datas) => {
+  db.query(sql, [tutor_userName], (err, data) => {
     if (err) {
       console.log(err);
       res.send({ msg: 'fail' })
     } else {
-      res.send({ msg: 'success', datas });
-      console.log(datas)
+      res.send({data});
+      console.log(data)
     }
   });
 });
