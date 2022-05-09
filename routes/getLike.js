@@ -2,10 +2,11 @@ const express = require('express');
 const auth = require('../middlewares/auth-middleware')
 const router = express.Router();
 const db = require('../config');
+const res = require('express/lib/response');
 
 // Like
-router.patch('/like',(req,res)=>{
-    const userName = user.userName
+router.patch('/like',auth,(req,res)=>{
+    const userName = res.locals.user.userName
     console.log(req.body)
     const {tutorName} = req.body;
     const sql1 =  'UPDATE Tutor SET `like` = `like` + 1 WHERE userName=?'
@@ -57,8 +58,84 @@ router.patch('/unlike',(req,res)=>{
         }
     })
 })
+// getPopularTutor 
+router.get('/getPopularTutor',(req,res)=>{
+    const sql = 'SELECT * FROM `Tutor` ORDER BY `like` DESC'
+    db.query(sql,(err,data)=>{
+        if(err){
+            console.log(err)
+            res.status(400).send({msg:'fail'})
+        }else{
+            res.status(200).send({msg:'success', data})
+        }
+    })
 
-// router.get('/')
+})
+// getTutor
+router.get('/getTutor',(req,res)=>{
+    const sql = 'SELECT * FROM `Tutor`'
+    db.query(sql,(err,data)=>{
+        if(err){
+            console.log(err)
+            res.status(400).send({msg:'fail'})
+        }else{
+            res.status(200).send({msg:'success',data})
+        }
+    })
+})
+
+
+
+
+// 튜터검색
+router.get('/getTutor/', (req,res)=>{
+    const {keyword}= req.query
+    
+
+})
+
+
+
+// 유저상세페이지
+router.get('/getUserDetail/', (req,res)=>{
+    const{userId,isTutor} = req.query
+    console.log(userId)
+    console.log(typeof userId)
+    if(isTutor==='1'){
+        const sql1 = 'SELECT * FROM `Tutor` WHERE userId=?'
+        db.query(sql1, parseInt(userId), (err,data)=>{
+            if(err){
+                console.log(err)
+                res.status(400).send({msg:'fail'})
+            }else{
+                res.status(200).send({msg:'success',data})
+            }
+        })
+    }else{
+        const sql2 = 'SELECT * FROM `Tutee` WHERE userId=?'
+        db.query(sql2, parseInt(userId), (err,data2)=>{
+            if(err){
+                console.log(err)
+                res.status(400).send({msg:'fail'})  
+            }else{
+                res.status(200).send({msg:'success', data2})
+            }
+        })
+
+
+    }
+
+
+
+    // const sql = 
+
+})
+
+
+
+
+
+
 
 
 module.exports=router

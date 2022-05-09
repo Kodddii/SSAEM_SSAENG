@@ -15,10 +15,12 @@ router.post('/addBooking/:tutorName',(req,res)=>{
     const {end, start, userName} = req.body;
     console.log(req.body)
     console.log(req.params)
+    const start2 = start.replace(' (한국 표준시)','')
+    const end2= end.replace(' (한국 표준시)','')
     const tutorName = req.params.tutorName
-    const datas = [start,end,tutorName,userName]
+    const datas = [start2,end2,tutorName,userName]
 
-    const sql = 'INSERT INTO TimeTable (`startTime`,`endTime`,`Tutor_userName`,`Tutee_userName`) VALUES (?,?,?,?)'
+    const sql = 'INSERT INTO TimeTable (`start`,`end`,`Tutor_userName`,`Tutee_userName`) VALUES (?,?,?,?)'
 
     db.query(sql,datas,(err,rows)=>{
         if (err) {
@@ -68,17 +70,17 @@ router.get('/getBooking/',(req,res,)=>{
 })
 
 //예약리스트 개수 불러오기 
-router.get('/getBookingCnt',(req,res)=>{
-    const sql = `SELECT COUNT (*) FROM TimeTable`
-    db.query(sql,(err,data)=>{
-        if(err){
-            console.log(err)
-        }else{
-            console.log(data)
-            res.status(200).send({msg:'success', data})
-        }
-    })
-})
+// router.get('/getBookingCnt',(req,res)=>{
+//     const sql = `SELECT COUNT (*) FROM TimeTable`
+//     db.query(sql,(err,data)=>{
+//         if(err){
+//             console.log(err)
+//         }else{
+//             console.log(data)
+//             res.status(200).send({msg:'success', data})
+//         }
+//     })
+// })
 // })
 
 // {
