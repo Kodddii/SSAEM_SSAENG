@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../config.js');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-const authmiddleware = require('../middlewares/auth-middleware');
+
 
 
 //회원가입
@@ -236,15 +236,15 @@ router.post('/login', async (req, res) => {
               res.send({msg: '로그인 실패'});
             }
           });
-        }else{
+        } else {
         console.log('Id not found');
         res.send({ msg: 'login failed' });
         }
       }
-    );
+     ) 
     }
-  });
-})
+  })
+});
 
 
 
@@ -261,15 +261,84 @@ router.get('/login/getUser', middleware, async (req, res) => {
   });
 });
 
-// 프론트에서 토큰을쓰는방법
-  // 1. 로컬스토리지 => 토큰을 헤더에 담아서
-  // req.headers
-  // 2. 쿠키 => 아무요청을할때 항상 헤더에 토큰이 쿠키에담겨저
-  // const abc = req.headers.cookies
-  // abc = 'token=a;sdkfjsa;dfkj;dkf'
-  // abc.split('=')[1]
-  // verify userName
+
+// 유저정보 수정
+router.patch('/editUser', async (req, res) => {
+  //  const userId = res.locals.userId;
+   const { userEmail, userName, pwd, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime } = req.body;
+   if (isTutor) {  //수정하려는 사람이 보내준 값이 isTutor: true일때,
+      const sql = 'SELECT * FROM Tutee WHERE userEmail=?' //Tutee 테이블에서 userEmail로 조회함
+      console.log("튜티테이블에 있는지 조회함")
+      db.query(sql, [userEmail], (err, rows) => {
+      if (rows.length !== 0) {  
+        console.log("튜티데이블에 있다!!!")                          //if Tutee테이블에 있던 유저가 Tutor테이블로 이동하고 싶은거면
+      const sql2 = 'INSERT INTO Tutor (`userEmail`,`userName`,`pwd`,`isTutor`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
+      db.query(sql2, [userEmail, userName, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime], (err, row) => {
+        if (err) {
+          console.log(err)
+        } else {
+           console.log("윤하짱짱")
+        res.status(200).send({msg: 'success'})
+        }
+     })                                                    //Tutor 테이블로 Insert해줌
+    console.log("선생님테이블에 저장하라고")
+                                                      
+  } else {                                              //else Tutor 테이블에 이미 있는 유저가 추가정보만 수정하고 싶은거면
+    const sql1 =
+      'UPDATE Tutor SET userName=?, isTutor=?, tag=?, language1=?, language2=?, language3=?, comment=?, contents=?, startTime=?, endTime=? WHERE userEmail=?'
+                                                          //Tutor 테이블에서 추가정보만 업데이트해준다
+    db.query(sql1, [userName, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime, userEmail], (err, row) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.status(200).send({msg: 'success'});
+      }
+    }); 
+  }
+ })
+ } else {    //else 수정하려는 사람이 보내준 값이 isTutor: false일때,(Tutee로 수정하고싶은 사람은 무조건 Tutee여야 함.)
+    const sql2 =
+      'UPDATE Tutee SET userName=?, isTutor=?, tag=?, language1=?, language2=?, language3=?, comment=?, contents=?, startTime=?, endTime=? WHERE userEmail=?'
+                                                      //Tutee테이블에서 추가정보를 업데이트해준다
+    db.query(sql2, [userName, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime, userEmail], (err, row) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.status(200).send({msg: 'success'});
+      }
+    });
+   }
+ })
     
+
+//필수정보 수정(pwd)
+
+
+
+
+
+
+
+
+
+//   }const sql1 = 'UPDATE Tutor SET userName WHERE userName=?'
+//       db.query(sql1, userName, (err, datas1) => {
+//         if (err) console.log(err);
+//     if(datas1.length){
+//       res.locals.user = datas1[0];
+//       next();
+//     };
+//   });
+//     const sql2 = 'UPDATE Tutor SET userName WHERE userName=?'
+//       db.query(sql2, userName, (err, datas2) => {
+//         if (err) console.log(err);
+//     if(datas2.length){
+//       res.locals.user = datas2[0];
+//       next();
+//     };
+//   });
+//  }  
+// )
 
 // //로그아웃
 // router.get('/login/logOut', logOut);

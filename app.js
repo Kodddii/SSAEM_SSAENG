@@ -3,7 +3,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const loginRouter = require("./routes/logins");
+const loginRouter = require("./routes/login");
 const reservationRouter = require("./routes/reservation")
 const getLikeRouter = require("./routes/getLike")
 const path = require('path');
@@ -16,7 +16,6 @@ const reviewRouter = require('./routes/review');
 const authRouter = require('./routes/auth')
 const app_low = express();
 const app = express();
-
 passportConfig();
 // app.set('port', 3000);
 
@@ -73,8 +72,6 @@ const SocketIO = require("socket.io")
 // });
 // /////////////////////////////////////////////////////////
 
-// const helmet = require('helmet') 
-// app.use(helmet());
 // //접속로그 확인
 // const requestMiddleware = (req, res, next) => {
 //   console.log("Request URL:", req.originalUrl, "-", new Date());
