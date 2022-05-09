@@ -1,13 +1,13 @@
 const express = require('express');
-
+const auth = require('../middlewares/auth-middleware')
 const router = express.Router();
 const db = require('../config');
 
 // Like
 router.patch('/like',(req,res)=>{
-    // const token = req.headers;
+    const userName = user.userName
     console.log(req.body)
-    const {userName ,tutorName} = req.body;
+    const {tutorName} = req.body;
     const sql1 =  'UPDATE Tutor SET `like` = `like` + 1 WHERE userName=?'
     db.query(sql1,tutorName,(err,rows1)=>{
         if(err){
@@ -28,11 +28,12 @@ router.patch('/like',(req,res)=>{
         }
     })
 })
+
 // unlike
 router.patch('/unlike',(req,res)=>{
-    // const token = req.headers;
+    const userName = user.userName
     console.log(req.body)
-    const {userName ,tutorName} = req.body;
+    const {tutorName} = req.body;
     const sql1 =  'UPDATE Tutor SET `like` = `like` - 1 WHERE userName=?'
     db.query(sql1,tutorName,(err,rows1)=>{
         if(err){
