@@ -1,8 +1,6 @@
 const passport = require('passport');
 const KakaoStrategy = require('passport-kakao').Strategy;
-// const { User } = require('../models');
 const db = require('../config')
-const jwt = require('jsonwebtoken')
 module.exports = () => {
   passport.use(
     new KakaoStrategy(
@@ -17,55 +15,57 @@ module.exports = () => {
       * profile: 카카오가 보내준 유저 정보. profile의 정보를 바탕으로 회원가입
       */
       async (accessToken, refreshToken, profile, done) => {
-        console.log('kakao profile', profile);
+        // console.log('kakao profile', profile);
         console.log('Token', accessToken, refreshToken);
-        const param = [profile._json && profile._json.kakao_account.email, profile._json.properties.profile_image, false]
+        const param = [profile._json && profile._json.kakao_account.email, profile.displayName, '1234qwer', false]
+        console.log(profile._json && profile._json.kakao_account.email)
         try {
-          const sql = 'SELECT * FROM tutee, tutor WHERE email=?'
-          db.query(sql, profile._json && profile._json.kakao_account.email, (err, data) => {
-            if (data == undefined) {
+          const sql1 = 'SELECT * FROM Tutee WHERE userEmail=?'
+          const sql2 = 'SELECT * FROM Tutee WHERE userEmail=?'
+          db.query(sql1, [profile._json && profile._json.kakao_account.email], (err, datas) => {
+            if (datas.length !== 0) {
+              console.log(datas, 'tutee 회원가입 되어있음!!!')
               done(null, param)
             } else {
-              db.query(
-                'INSERT INTO `tutee`(`email`, `profile`, `isTutor`) VALUES (?,?,?)',
-                param,
-                (err, row) => {
-                  if (err) {
-                    console.log(err);
-                    done(err)
-                  } else {
-                    done(null, newUser);
-                  }
+              db.query(sql2, [profile._json && profile._json.kakao_account.email], (err, datas) => {
+                if (datas.length !== 0) {
+                  console.log(datas, 'tutor 회원가입 되어있음!!!')
+                  done(null, param)
+                } else {
+                  db.query('INSERT INTO `Tutee`(`userEmail`, `userName`, `pwd`, `isTutor`) VALUES (?,?,?,?)',
+                    param, (err, datas) => {
+                      done(null, datas)
+                    })
                 }
-              )
-            } 
+              })
+            }
           });
         } catch (error) {
           console.error(error);
           done(error);
         }
 
-          // const exUser = await User.findOne({ // 카카오 가입자 찾기.
-          //   where: { userId: profile.id },
-          //   // where: { userId: profile.id, provider: 'kakao' },
-          // });
-          // if (exUser) { // 가입자 있으면? 로그인 성공
-          //   done(null, exUser);
-          //   console.log('kakao 로그인 확인!!!')
-          // } else { // 없으면? 생성 후 로그인 시키기
-          //   const newUser = await User.create({
-          //     // id - Number이며, 사용자의 kakao id
-          //     // _json - 사용자 정보 조회로 얻은 json 원본 데이터
-          //     tuteeId: profile.id,
-          //     tuteeEmail: profile._json && profile._json.kakao_account.email,
-          //     tuteeName: profile.displayName,
-          //     // pwd: ,
-          //     tuteeProfile: profile._json.properties.profile_image,
-          //     // snsId: profile.id, // 새로 추가한 sns Id 컬럼
-          //     // provider: 'kakao', // 새로 추가한 가입 출처 컬럼
-          //   });
-          //   done(null, newUser);
-          // }
+        // const exUser = await User.findOne({ // 카카오 가입자 찾기.
+        //   where: { userId: profile.id },
+        //   // where: { userId: profile.id, provider: 'kakao' },
+        // });
+        // if (exUser) { // 가입자 있으면? 로그인 성공
+        //   done(null, exUser);
+        //   console.log('kakao 로그인 확인!!!')
+        // } else { // 없으면? 생성 후 로그인 시키기
+        //   const newUser = await User.create({
+        //     // id - Number이며, 사용자의 kakao id
+        //     // _json - 사용자 정보 조회로 얻은 json 원본 데이터
+        //     tuteeId: profile.id,
+        //     tuteeEmail: profile._json && profile._json.kakao_account.email,
+        //     tuteeName: profile.displayName,
+        //     // pwd: ,
+        //     tuteeProfile: profile._json.properties.profile_image,
+        //     // snsId: profile.id, // 새로 추가한 sns Id 컬럼
+        //     // provider: 'kakao', // 새로 추가한 가입 출처 컬럼
+        //   });
+        //   done(null, newUser);
+        // }
         // } catch (error) {
         //   console.error(error);
         //   done(error);
