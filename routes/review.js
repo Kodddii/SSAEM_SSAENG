@@ -4,17 +4,31 @@ const db = require('../config');
 const middleware = require('../middlewares/auth-middleware')
 // const authMiddleare = require('../middlewares/auth');
 ///
+
+// 리뷰 전체 불러오기(메인화면)
+router.get('/getReview', async (req, res) => {
+  const sql = "SELECT * FROM Review ORDER BY tutor_userName"
+  db.query(sql, (err, datas) => {
+    if (err) {
+      console.log(err);
+      res.send({ msg: 'fail' });
+    } else {
+      console.log(datas);
+      res.send({ msg: 'success', datas});
+    }
+  })
+})
 // 리뷰 불러오기(조회)
 router.get('/getReview/:tutor_userName', async (req, res) => {
   const { tutor_userName } = req.params;
   console.log(req.params);
-  const sql = "SELECT * FROM Review WHERE tutor_userName=?"
+  const sql = "SELECT * FROM Review WHERE tutor_userName=? ORDER BY createdAt DESC"
   db.query(sql, [tutor_userName], (err, datas) => {
     if (err) {
       console.log(err);
-      res.send({ meg: 'fail' })
+      res.send({ msg: 'fail' })
     } else {
-      res.send({ meg: 'success', datas });
+      res.send({ msg: 'success', datas });
       console.log(datas)
     }
   });
@@ -23,9 +37,9 @@ router.get('/getReview/:tutor_userName', async (req, res) => {
 // 리뷰 작성
 router.post('/addReview', middleware, async (req, res) => {
   const tutee_userName = res.locals.user.userName;
-  const { tutor_userName, rate, text } = req.body;
+  const { userName, rate, text } = req.body;
   // console.log(tutee_userName, req.body);
-  const param = [tutor_userName, tutee_userName, rate, text];
+  const param = [userName, tutee_userName, rate, text];
   // console.log(param)
   db.query(
     'INSERT INTO `Review`(`tutor_userName`, `tutee_userName`, `rate`, `text`) VALUES (?,?,?,?)',
