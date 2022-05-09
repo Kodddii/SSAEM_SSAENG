@@ -307,10 +307,9 @@ router.patch('/editUser', async (req, res) => {
         res.status(200).send({msg: 'success'});
       }
     });
-  }
-})
+   }
+ })
     
-
 
 //필수정보 수정(pwd)
 
