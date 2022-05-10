@@ -35,7 +35,7 @@ router.post('/addBooking/:tutorName',(req,res)=>{
 //  예약된 리스트 불러오기 
 router.get('/getBooking/',(req,res,)=>{
     console.log(req.query)
-    const userName = req.query.userName
+    const userId = req.query.userId
     const isTutor = req.query.isTutor
     console.log(userName)
     console.log(isTutor)

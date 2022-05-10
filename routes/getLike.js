@@ -79,6 +79,7 @@ router.get('/getTutor',(req,res)=>{
             console.log(err)
             res.status(400).send({msg:'fail'})
         }else{
+            console.log(data)
             res.status(200).send({msg:'success',data})
         }
     })
@@ -87,12 +88,27 @@ router.get('/getTutor',(req,res)=>{
 
 
 
-// 튜터검색
-router.get('/getTutor/', (req,res)=>{
+// getTutor with keyword
+router.get('/getTutorTag/', (req,res)=>{
     const {keyword}= req.query
-    
+    const data  = `%${keyword}%`
+    const dataArr= [data,data,data]
+    const sql = 'SELECT * FROM Tutor WHERE tag LIKE ? OR comment LIKE ? OR contents LIKE ?'
+    db.query(sql, dataArr, (err,datas)=>{
+        if(err){
+            console.log(err)
+        }else{
+            res.status(200).send(datas)
+        }
+    })
 
 })
+
+// getKeyword
+
+
+
+
 
 
 

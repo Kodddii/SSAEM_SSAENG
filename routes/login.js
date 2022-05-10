@@ -12,6 +12,7 @@ const saltRounds = 10;
 
 //회원가입
 router.post('/signUp', async (req, res) => {
+  console.log(req.body)
   console.log(1);
   const {
     userEmail,
@@ -19,7 +20,6 @@ router.post('/signUp', async (req, res) => {
     pwd,
     pwdCheck,
     isTutor,
-    userProfile,
     tag,
     language1,
     language2,
@@ -66,7 +66,6 @@ router.post('/signUp', async (req, res) => {
       userName,
       pwd,
       isTutor,
-      userProfile,
       tag,
       language1,
       language2,

@@ -9,7 +9,7 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportConfig = require('./passport');
-const SocketIO = require("socket.io")
+const {Server} = require("socket.io")
 
 const app_low = express();
 const app = express();
@@ -45,7 +45,7 @@ const httpServer = http.createServer(app_low);
 const httpsServer = https.createServer(credentials,app)
 
 // socket.io https 서버
-const io = SocketIO(httpsServer, {
+const io = new Server(httpsServer, {
 	cors: {
 		origin: "*",
 		methods: [ "GET", "POST" ]
@@ -60,6 +60,7 @@ const io = SocketIO(httpsServer, {
 // };
 
 //미들웨어
+app.use(cors());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
   session({
@@ -81,8 +82,6 @@ app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors());
-app.use(express.json());
 // app.use(requestMiddleWare);
 
 
@@ -110,9 +109,7 @@ app.get('/', function (req, res) {
   res.send('메인페이지 입니다!!!')
 })
 
-// app.listen(3000, () => {
-//   console.log("3000번 포트에서 대기중!");
-// });
+
 
 io.on("connection", (socket) => {
 	console.log(1)
@@ -128,7 +125,7 @@ io.on("connection", (socket) => {
 			socket.emit("created");
 			console.log(2.2)
 			
-		  } else if (room?.size == 1) {
+		  } else if (room.size == 1) {
 			  console.log(2.3)
 			//room.size == 1 when one person is inside the room.
 			socket.join(roomName);
@@ -154,7 +151,7 @@ io.on("connection", (socket) => {
 	socket.on('sendingSignal',({signal, roomName})=>{
 		console.log(3)
 		console.log({signal,roomName})
-		io.to(roomName).emit("offer",{signal, roomName, stream})
+		socket.broadcast.emit("offer",{signal, roomName})
 		console.log(3.5)
 		
 	  })
@@ -178,12 +175,92 @@ io.on("connection", (socket) => {
 // app.listen(3000, () => {
 //   console.log("3000번 포트에서 대기중!");
 // });
+//////////////////////////////////////
+// const users = {};
 
 
+
+// const socketToRoom = {};
+
+// io.on('connection', socket => {
+//     socket.on("join room", roomID => {
+// 		console.log(1)
+//         if (users[roomID]) {
+//             const length = users[roomID].length;
+//             if (length === 4) {
+//                 socket.emit("room full");
+//                 return;
+//             }
+// 			console.log(2)
+//             users[roomID].push(socket.id);
+//         } else {
+// 			console.log(2.5)
+//             users[roomID] = [socket.id];
+//         }
+// 		console.log(3)
+//         socketToRoom[socket.id] = roomID;
+//         const usersInThisRoom = users[roomID].filter(id => id !== socket.id);
+
+//         socket.emit("all users", usersInThisRoom);
+//     });
+
+//     socket.on("sending signal", payload => {
+// 		console.log(4)
+//         io.to(payload.userToSignal).emit('user joined', { signal: payload.signal, callerID: payload.callerID });
+// 		console.log(5)
+//     });
+
+//     socket.on("returning signal", payload => {
+// 		console.log(6)
+//         io.to(payload.callerID).emit('receiving returned signal', { signal: payload.signal, id: socket.id });
+// 		console.log(7)
+//     });
+
+//     socket.on('disconnect', () => {
+// 		console.log(8)
+//         const roomID = socketToRoom[socket.id];
+//         let room = users[roomID];
+//         if (room) {
+//             room = room.filter(id => id !== socket.id);
+//             users[roomID] = room;
+//         }
+// 		console.log(9)
+//     });
+
+// });
+
+
+// io.on("connection", (socket) => {
+// 	console.log(1)
+// 	socket.emit("me", socket.id);
+
+// 	socket.on("disconnect", () => {
+// 		console.log(2)
+// 		socket.broadcast.emit("callEnded")
+// 		console.log(3)
+// 	});
+
+// 	socket.on("callUser", ({ userToCall, signalData, from, name }) => {
+// 		console.log(4)
+// 		io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+// 		console.log(5)
+// 	});
+
+// 	socket.on("answerCall", (data) => {
+// 		console.log(6)
+// 		io.to(data.to).emit("callAccepted", data.signal)
+// 		console.log(7)
+// 	});
+// });
+
+
+// app.listen(3000, () => {
+//   console.log("3000번 포트에서 대기중!");
+// });
 
 httpServer.listen(httpPort, ()=>{
 	console.log('http서버가 켜졌어요');
-  });
+});
 httpsServer.listen(httpsPort,() =>{
 	console.log('https서버가 켜졌어요')
 });
