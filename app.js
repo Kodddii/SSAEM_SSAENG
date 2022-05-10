@@ -32,14 +32,25 @@ const https = require("https")
 // https 인증관련
 const httpPort= 80;
 const httpsPort = 443;
-const privateKey = fs.readFileSync(__dirname + '/private.key', 'utf8');
-const certificate = fs.readFileSync(__dirname + '/certificate.crt', 'utf8');
-const ca = fs.readFileSync(__dirname + '/ca_bundle.crt', 'utf8');
+const privateKey = fs.readFileSync(__dirname + '/jg-jg_shop.key', 'utf8');
+const certificate = fs.readFileSync(__dirname + '/jg-jg_shop__crt.pem', 'utf8');
+const ca = fs.readFileSync(__dirname + '/jg-jg_shop__ca.pem', 'utf8');
 const credentials = {
   key: privateKey,
   cert: certificate,
   ca: ca,
 };
+
+
+
+// const privateKey = fs.readFileSync(__dirname + '/private.key', 'utf8');
+// const certificate = fs.readFileSync(__dirname + '/certificate.crt', 'utf8');
+// const ca = fs.readFileSync(__dirname + '/ca_bundle.crt', 'utf8');
+// const credentials = {
+//   key: privateKey,
+//   cert: certificate,
+//   ca: ca,
+// };
 
 const httpServer = http.createServer(app_low);
 const httpsServer = https.createServer(credentials,app)
@@ -151,7 +162,7 @@ io.on("connection", (socket) => {
 	socket.on('sendingSignal',({signal, roomName})=>{
 		console.log(3)
 		console.log({signal,roomName})
-		socket.broadcast.emit("offer",{signal, roomName})
+		socket.broadcast.emit("offer",signal)
 		console.log(3.5)
 		
 	  })

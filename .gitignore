@@ -184,6 +184,10 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
-/private.key
-/certificate.crt
+build/
+/jg-jg_shop__ca.pem
+/jg-jg_shop__crt.pem
+/jg-jg_shop.key
 /ca_bundle.crt
+/certificate.crt
+/private.key
