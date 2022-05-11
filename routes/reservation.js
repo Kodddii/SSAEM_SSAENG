@@ -37,8 +37,7 @@ router.get('/getBooking/',(req,res,)=>{
     console.log(req.query)
     const userId = req.query.userId
     const isTutor = req.query.isTutor
-    console.log(userName)
-    console.log(isTutor)
+    const userName = req.query.userName
     console.log(typeof isTutor)
     if (isTutor==='1'){
         const sql1 ='SELECT * FROM TimeTable WHERE Tutor_userName=? ORDER BY Tutor_userName'
