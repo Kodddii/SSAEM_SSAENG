@@ -128,7 +128,7 @@ router.get('/getTutor',(req,res)=>{
 router.get('/getTutorTag/', (req,res)=>{
     const {keyword}= req.query
     const data  = `%${keyword}%`
-    const dataArr= [data,data,data]
+    const dataArr= [data,data,data,data]
     const sql =
         'SELECT * FROM Tutor WHERE userName LIKE ? OR tag LIKE ? OR comment LIKE ? OR contents LIKE ?;'
     db.query(sql, dataArr, (err,datas)=>{
