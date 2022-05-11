@@ -13,7 +13,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportConfig = require('./passport');
 const reviewRouter = require('./routes/review');
-const authRouter = require('./routes/auth')
+const authRouter = require('./routes/auth');
 
 const app = express();
 passportConfig();
@@ -67,5 +67,3 @@ app.get('/', function (req, res) {
 app.listen(3000, () => {
   console.log("3000번 포트에서 대기중!");
 });
-
-

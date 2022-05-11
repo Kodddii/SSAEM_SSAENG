@@ -13,13 +13,13 @@ const saltRounds = 10;
 //회원가입
 router.post('/signUp', async (req, res) => {
   console.log(1);
+  const userProfile = req.file.location;
   const {
     userEmail,
     userName,
     pwd,
     pwdCheck,
     isTutor,
-    userProfile,
     tag,
     language1,
     language2,
@@ -272,8 +272,8 @@ router.patch('/editUser', async (req, res) => {
       db.query(sql, [userEmail], (err, rows) => {
       if (rows.length !== 0) {  
         console.log("튜티데이블에 있다!!!")                          //if Tutee테이블에 있던 유저가 Tutor테이블로 이동하고 싶은거면
-      const sql2 = 'INSERT INTO Tutor (`userEmail`,`userName`,`pwd`,`isTutor`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
-      db.query(sql2, [userEmail, userName, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime], (err, row) => {
+      const sql2 = 'INSERT INTO Tutor (`userEmail`,`userName`,`pwd`,`isTutor`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
+      db.query(sql2, [userEmail, userName, pwd, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime], (err, row) => {
         if (err) {
           console.log(err)
         } else {
@@ -285,7 +285,7 @@ router.patch('/editUser', async (req, res) => {
                                                       
   } else {                                              //else Tutor 테이블에 이미 있는 유저가 추가정보만 수정하고 싶은거면
     const sql1 =
-      'UPDATE Tutor SET userName=?, isTutor=?, tag=?, language1=?, language2=?, language3=?, comment=?, contents=?, startTime=?, endTime=? WHERE userEmail=?'
+      'UPDATE Tutor SET userName=?, isTutor=?, pwd=?, tag=?, language1=?, language2=?, language3=?, comment=?, contents=?, startTime=?, endTime=? WHERE userEmail=?'
                                                           //Tutor 테이블에서 추가정보만 업데이트해준다
     db.query(sql1, [userName, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime, userEmail], (err, row) => {
       if (err) {
