@@ -85,6 +85,7 @@ router.get(
   }),
   // kakaoStrategy에서 성공한다면 콜백 실행
   (req, res) => {
+    console.log(req.session)
     // const token = jwt.sign({ id: tutee.userId }, 'my-secret-key');
     console.log('로그인 확인!!!');
     // res.send({
