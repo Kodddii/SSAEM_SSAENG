@@ -1,33 +1,69 @@
 const express = require('express');
-const auth = require('../middlewares/auth-middleware')
+const authMiddleware = require('../middlewares/auth-middleware')
 const router = express.Router();
 const db = require('../config');
 const res = require('express/lib/response');
 
 // Like
-router.patch('/like',auth,(req,res)=>{
+router.patch('/like',authMiddleware,(req,res)=>{
     const userName = res.locals.user.userName
     console.log(req.body)
     const {tutorName} = req.body;
-    const sql1 =  'UPDATE Tutor SET `like` = `like` + 1 WHERE userName=?'
-    db.query(sql1,tutorName,(err,rows1)=>{
-        if(err){
+    const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? AND Tutor_userName=?'
+    const answerData = [userName, tutorName]
+    db.query(sql0, answerData , (err,data0)=>{
+        if(err) {
             console.log(err)
+
+        }else if(data0.length){
+            res.status(400).send({msg: '이미 like한 Tutor 입니다'})
         }else{
-            console.log('success')
+            db.query(sql1,tutorName,(err,rows1)=>{
+                if(err){
+                    console.log(err)
+                }else{
+                    console.log('success')
+                }
+            })
+            const sql2 = 'INSERT INTO `Like` (`Tutee_userName`,`Tutor_userName`) VALUES (?,?)'
+            const data2 = [userName,tutorName]
+            db.query(sql2, data2, (err2,rows2)=>{
+                if(err2){
+                    res.status(400).send({msg:'fail'})
+                    console.log(err2)
+                }else{
+                    res.status(200).send({msg:'success'})
+                    console.log(rows2)
+                }
+            })
         }
     })
-    const sql2 = 'INSERT INTO `Like` (`Tutee_userName`,`Tutor_userName`) VALUES (?,?)'
-    const data2 = [userName,tutorName]
-    db.query(sql2, data2, (err2,rows2)=>{
-        if(err2){
-            res.status(400).send({msg:'fail'})
-            console.log(err2)
-        }else{
-            res.status(200).send({msg:'success'})
-            console.log(rows2)
-        }
-    })
+
+
+
+
+    const sql1 =  'UPDATE Tutor SET `like` = `like` + 1 WHERE userName=?'
+
+
+
+    // db.query(sql1,tutorName,(err,rows1)=>{
+    //     if(err){
+    //         console.log(err)
+    //     }else{
+    //         console.log('success')
+    //     }
+    // })
+    // const sql2 = 'INSERT INTO `Like` (`Tutee_userName`,`Tutor_userName`) VALUES (?,?)'
+    // const data2 = [userName,tutorName]
+    // db.query(sql2, data2, (err2,rows2)=>{
+    //     if(err2){
+    //         res.status(400).send({msg:'fail'})
+    //         console.log(err2)
+    //     }else{
+    //         res.status(200).send({msg:'success'})
+    //         console.log(rows2)
+    //     }
+    // })
 })
 
 // unlike
@@ -104,8 +140,33 @@ router.get('/getTutorTag/', (req,res)=>{
 
 })
 
-// getKeyword
-
+// getTag
+router.get('/getTag', (req,res)=>{
+    const sql = 'SELECT tag FROM Tutor '
+    db.query(sql,(err,data)=>{
+        if(err) console.log(err)
+        else{
+            console.log(data)
+            let arr =[]
+            for (let x of data){
+                arr.push(x.tag)
+            }
+            let arr2 = arr.join(',').split(',')
+            let arr3 =[]
+            for(let x of arr2){
+            arr3.push(x.trim())
+            }
+            function shuffle(array) {
+            array.sort(() => Math.random() - 0.5);
+            }
+            shuffle(arr3)
+            const arr4 = arr3.filter((element, index) => {
+                return arr3.indexOf(element) === index;
+            });
+            res.status(200).send(arr4)
+        }
+    })
+})
 
 
 
@@ -114,12 +175,11 @@ router.get('/getTutorTag/', (req,res)=>{
 
 // 유저상세페이지
 router.get('/getUserDetail/', (req,res)=>{
-    const{userId,isTutor} = req.query
-    console.log(userId)
-    console.log(typeof userId)
+    const{userName,isTutor} = req.query
+    console.log(userName)
     if(isTutor==='1'){
-        const sql1 = 'SELECT * FROM `Tutor` WHERE userId=?'
-        db.query(sql1, parseInt(userId), (err,data)=>{
+        const sql1 = 'SELECT * FROM `Tutor` WHERE userName=?'
+        db.query(sql1, userName, (err,data)=>{
             if(err){
                 console.log(err)
                 res.status(400).send({msg:'fail'})
@@ -128,8 +188,8 @@ router.get('/getUserDetail/', (req,res)=>{
             }
         })
     }else{
-        const sql2 = 'SELECT * FROM `Tutee` WHERE userId=?'
-        db.query(sql2, parseInt(userId), (err,data2)=>{
+        const sql2 = 'SELECT * FROM `Tutee` WHERE userName=?'
+        db.query(sql2, userName, (err,data2)=>{
             if(err){
                 console.log(err)
                 res.status(400).send({msg:'fail'})  
@@ -137,8 +197,6 @@ router.get('/getUserDetail/', (req,res)=>{
                 res.status(200).send({msg:'success', data2})
             }
         })
-
-
     }
 
 

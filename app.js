@@ -164,20 +164,11 @@ io.on("connection", (socket) => {
 		console.log({signal,roomName})
 		socket.broadcast.emit("offer",signal)
 		console.log(3.5)
-		
 	  })
-	//   socket.on(‘sendingSignal’,({signal, roomName})=>{
-    //     console.log(3)
-    //     io.to(roomName).emit(“offer”, {signal, roomName, stream})
-    //     console.log(3.5)
-    //   })
-
-	  
 	socket.on("returningSignal", ({ signal, roomName }) => {
 		console.log({signal,roomName})
 		console.log(4)
 		io.to(roomName).emit("receivingSignal", signal)
-		// io.to(roomName).emit("answer", { signal: signal});
 		console.log(4.5)
 	});
 })
