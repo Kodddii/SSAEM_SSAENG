@@ -94,6 +94,16 @@ router.patch('/unlike',(req,res)=>{
         }
     })
 })
+router.get('/isLike', (req,res)=>{
+    const sql  = 'SELECT * FROM Like '
+
+
+})
+
+
+
+
+
 // getPopularTutor 
 router.get('/getPopularTutor',(req,res)=>{
     const sql = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3,`like` FROM `Tutor` ORDER BY `like` DESC'
