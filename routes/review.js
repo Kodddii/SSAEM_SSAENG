@@ -11,10 +11,10 @@ router.get('/getReview', async (req, res) => {
   db.query(sql, (err, data) => {
     if (err) {
       console.log(err);
-      res.send({ msg: 'fail' });
+      res.send({ msg: 'fail', err })
     } else {
-      // console.log(data);
       res.send({ data });
+      console.log(data);
     }
   })
 })
@@ -26,10 +26,10 @@ router.get('/getReview/:tutor_userName', async (req, res) => {
   db.query(sql, [tutor_userName], (err, data) => {
     if (err) {
       console.log(err);
-      res.send({ msg: 'fail' })
+      res.send({ msg: 'fail', err })
     } else {
       res.send({ data });
-      console.log(data)
+      console.log(data);
     }
   });
 });
@@ -44,12 +44,13 @@ router.post('/addReview', middleware, async (req, res) => {
   db.query(
     'INSERT INTO `Review`(`tutor_userName`, `tutee_userName`, `rate`, `text`) VALUES (?,?,?,?)',
     param,
-    (err, row) => {
+    (err, data) => {
       if (err) {
         console.log(err);
-        res.send({ msg: 'fail' })
+        res.send({ msg: 'fail', err })
       } else {
-        res.send({ msg: 'success' });
+        res.send({ data });
+        console.log(data)
       }
     });
 });
@@ -63,8 +64,10 @@ router.patch('/editReview', async (req, res) => {
   db.query(sql, [rate, text, reviewId], (err, data) => {
     if (err) {
       console.log(err)
+      res.send({ msg: 'fail', err })
     } else {
-      res.send({ msg: 'success', data })
+      res.send({ data })
+      console.log(data);
     }
     // const sql = 'SELECT * FROM Review WHERE tutee_userName=?'
     // db.query(sql, [tutee_userName], (err, rows) => {
@@ -91,11 +94,10 @@ router.delete('/deleteReview', async (req, res) => {
   db.query(sql, [reviewId], (err, data) => {
     if (data == undefined) {
       console.log(err);
-      console.log(data);
-      res.send({ msg: 'fail' })
+      res.send({ msg: 'fail', err })
     } else {
-      console.log(data)
-      res.send({ msg: 'success' })
+      res.send({ data });
+      console.log(data);
     }
     // const sql = 'SELECT * FROM Review WHERE tutee_userName=?'
     // db.query(sql, [tutee_userName], (err, rows) => {
