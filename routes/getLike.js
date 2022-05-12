@@ -96,12 +96,13 @@ router.patch('/unlike',(req,res)=>{
 })
 // getPopularTutor 
 router.get('/getPopularTutor',(req,res)=>{
-    const sql = 'SELECT * FROM `Tutor` ORDER BY `like` DESC'
+    const sql = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3,`like` FROM `Tutor` ORDER BY `like` DESC'
     db.query(sql,(err,data)=>{
         if(err){
             console.log(err)
             res.status(400).send({msg:'fail'})
         }else{
+            console.log(data)
             res.status(200).send({msg:'success', data})
         }
     })
@@ -109,7 +110,7 @@ router.get('/getPopularTutor',(req,res)=>{
 })
 // getTutor
 router.get('/getTutor',(req,res)=>{
-    const sql = 'SELECT * FROM `Tutor`'
+    const sql = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3,`like` FROM Tutor' 
     db.query(sql,(err,data)=>{
         if(err){
             console.log(err)
@@ -130,7 +131,7 @@ router.get('/getTutorTag/', (req,res)=>{
     const data  = `%${keyword}%`
     const dataArr= [data,data,data,data]
     const sql =
-        'SELECT * FROM Tutor WHERE userName LIKE ? OR tag LIKE ? OR comment LIKE ? OR contents LIKE ?;'
+        'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3,`like` FROM Tutor WHERE userName LIKE ? OR tag LIKE ? OR comment LIKE ? OR contents LIKE ?;'
     db.query(sql, dataArr, (err,datas)=>{
         if(err){
             console.log(err)
@@ -179,7 +180,7 @@ router.get('/getUserDetail/', (req,res)=>{
     const{userName,isTutor} = req.query
     console.log(userName)
     if(isTutor==='1'){
-        const sql1 = 'SELECT * FROM `Tutor` WHERE userName=?'
+        const sql1 = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3,`like` FROM `Tutor` WHERE userName=?'
         db.query(sql1, userName, (err,data)=>{
             if(err){
                 console.log(err)
@@ -189,7 +190,7 @@ router.get('/getUserDetail/', (req,res)=>{
             }
         })
     }else{
-        const sql2 = 'SELECT * FROM `Tutee` WHERE userName=?'
+        const sql2 = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3,`like` FROM `Tutee` WHERE userName=?'
         db.query(sql2, userName, (err,data2)=>{
             if(err){
                 console.log(err)
@@ -199,13 +200,13 @@ router.get('/getUserDetail/', (req,res)=>{
             }
         })
     }
+})
+router.get('/getLikeList',authMiddleware,(req,res)=>{
+    const userName = res.locals.user.userName
 
 
-
-    // const sql = 
 
 })
-
 
 
 
