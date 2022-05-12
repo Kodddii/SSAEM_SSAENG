@@ -60,11 +60,11 @@ router.patch('/editReview', async (req, res) => {
   const { reviewId, rate, text } = req.body;
   console.log(req.body)
   const sql = 'UPDATE Review SET rate=?, text=? WHERE reviewId=?'
-  db.query(sql, [rate, text, reviewId], (err, datas) => {
+  db.query(sql, [rate, text, reviewId], (err, data) => {
     if (err) {
       console.log(err)
     } else {
-      res.send({ msg: 'success' })
+      res.send({ msg: 'success', data })
     }
     // const sql = 'SELECT * FROM Review WHERE tutee_userName=?'
     // db.query(sql, [tutee_userName], (err, rows) => {
