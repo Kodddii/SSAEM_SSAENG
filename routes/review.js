@@ -55,7 +55,7 @@ router.post('/addReview', middleware, async (req, res) => {
 });
 
 // 리뷰 수정
-router.patch('/editReview', middleware, async (req, res) => {
+router.patch('/editReview', async (req, res) => {
   // const tutee_userName = res.locals.user.userName;
   const { reviewId, rate, text } = req.body;
   console.log(req.body)
