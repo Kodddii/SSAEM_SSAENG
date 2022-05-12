@@ -9,6 +9,7 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportConfig = require('./passport');
+const peer = require("peer")
 const {Server} = require("socket.io")
 
 const app_low = express();
@@ -122,56 +123,70 @@ app.get('/', function (req, res) {
 
 
 
-io.on("connection", (socket) => {
-	console.log(1)
-	// socket.emit("me", socket.id);
-	socket.on('joinRoom',(roomName)=>{
-		let rooms = io.sockets.adapter.rooms;
-    	let room = rooms.get(roomName);
+// io.on("connection", (socket) => {
+// 	console.log(1)
+// 	// socket.emit("me", socket.id);
+// 	socket.on('joinRoom',(roomName)=>{
+// 		let rooms = io.sockets.adapter.rooms;
+//     	let room = rooms.get(roomName);
+// 		console.log(2)
+// 		if (room == undefined) {
+// 			consol.log(2.1)
+// 			socket.join(roomName);
+// 			socket.emit("created");
+// 			console.log(2.2)
+// 		  } else if (room.size == 1) {
+// 			  console.log(2.3)
+// 			//room.size == 1 when one person is inside the room.
+// 			socket.join(roomName);
+// 			socket.emit("joined");
+// 			console.log(2.4)
+// 		  } else {
+// 			//when there are already two people inside the room.
+// 			socket.emit("full");
+// 			console.log(2.5)
+// 		  }
+// 		  console.log(rooms);
+// 		});
+// 	socket.on("disconnect", () => {
+// 		socket.broadcast.emit("callEnded")
+// 	});
+// 	socket.on("ready", function (roomName) {
+// 		socket.broadcast.to(roomName).emit("ready"); //Informs the other peer in the room.
+// 	  });
+// 	socket.on('sendingSignal',({signal, roomName})=>{
+// 		console.log(3)
+// 		console.log({signal,roomName})
+// 		socket.broadcast.emit("offer",signal)
+// 		console.log(3.5)
+// 	  })
+// 	socket.on("returningSignal", ({ signal, roomName }) => {
+// 		console.log({signal,roomName})
+// 		console.log(4)
+// 		io.to(roomName).emit("receivingSignal", signal)
+// 		console.log(4.5)
+// 	});
+// })
+
+io.on('connection', (socket) => {
+		console.log(1)
+		socket.on('join-room', (roomId, userId) => {
 		console.log(2)
-		
-		if (room == undefined) {
-			console.log(2.1)
-			socket.join(roomName);
-			socket.emit("created");
-			console.log(2.2)
-			
-		  } else if (room.size == 1) {
-			  console.log(2.3)
-			//room.size == 1 when one person is inside the room.
-			socket.join(roomName);
-			socket.emit("joined");
-			console.log(2.4)
-			
-		  } else {
-			//when there are already two people inside the room.
-			socket.emit("full");
-			console.log(2.5)
-		  }
-		  
-		  console.log(rooms);
-		});
-	socket.on("disconnect", () => {
-		socket.broadcast.emit("callEnded")
-	});
-	socket.on("ready", function (roomName) {
-		socket.broadcast.to(roomName).emit("ready"); //Informs the other peer in the room.
-	  });
-
-
-	socket.on('sendingSignal',({signal, roomName})=>{
+		socket.join(roomId);
+		console.log(2.1)
+		socket.to(roomId).broadcast.emit('user-connected', userId);
+		console.log(2.2)
+	  
+	  	socket.on('disconnect', () => {
 		console.log(3)
-		console.log({signal,roomName})
-		socket.broadcast.emit("offer",signal)
+		socket.to(roomId).broadcast.emit('user-disconnected', userId);
 		console.log(3.5)
-	  })
-	socket.on("returningSignal", ({ signal, roomName }) => {
-		console.log({signal,roomName})
-		console.log(4)
-		io.to(roomName).emit("receivingSignal", signal)
-		console.log(4.5)
+	  });
 	});
-})
+  });
+  
+
+
 
 
 // app.listen(3000, () => {
