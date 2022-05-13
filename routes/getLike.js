@@ -16,6 +16,7 @@ router.patch('/like',authMiddleware,(req,res)=>{
             console.log(err)
 
         }else if(data0.length){
+            console.log(data0.length)
             res.status(400).send({msg: '이미 like한 Tutor 입니다'})
         }else{
             db.query(sql1,tutorName,(err,rows1)=>{
@@ -67,8 +68,8 @@ router.patch('/like',authMiddleware,(req,res)=>{
 })
 
 // unlike
-router.patch('/unlike',(req,res)=>{
-    const userName = user.userName
+router.patch('/unlike',authMiddleware,(req,res)=>{
+    const userName = res.locals.user.userName
     console.log(req.body)
     const {tutorName} = req.body;
     const sql1 =  'UPDATE Tutor SET `like` = `like` - 1 WHERE userName=?'
@@ -94,6 +95,16 @@ router.patch('/unlike',(req,res)=>{
         }
     })
 })
+router.get('/isLike', (req,res)=>{
+    const sql  = 'SELECT * FROM Like '
+
+
+})
+
+
+
+
+
 // getPopularTutor 
 router.get('/getPopularTutor',(req,res)=>{
     const sql = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3,`like` FROM `Tutor` ORDER BY `like` DESC'
