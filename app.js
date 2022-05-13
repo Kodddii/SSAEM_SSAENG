@@ -174,12 +174,12 @@ io.on('connection', (socket) => {
 		console.log(2)
 		socket.join(roomId);
 		console.log(2.1)
-		socket.to(roomId).broadcast.emit('user-connected', userId);
+		io.to(roomId).emit('user-connected', userId);
 		console.log(2.2)
 	  
 	  	socket.on('disconnect', () => {
 		console.log(3)
-		socket.to(roomId).broadcast.emit('user-disconnected', userId);
+		io.to(roomId).emit('user-disconnected', userId);
 		console.log(3.5)
 	  });
 	});
