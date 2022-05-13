@@ -117,7 +117,6 @@ router.get('/getPopularTutor',(req,res)=>{
             res.status(200).send({msg:'success', data})
         }
     })
-
 })
 // getTutor
 router.get('/getTutor',(req,res)=>{
@@ -176,7 +175,8 @@ router.get('/getTag', (req,res)=>{
             const arr4 = arr3.filter((element, index) => {
                 return arr3.indexOf(element) === index;
             });
-            res.status(200).send(arr4)
+            
+            res.status(200).send(arr4.slice(0,8))
         }
     })
 })
@@ -219,7 +219,22 @@ router.get('/getLikeList',authMiddleware,(req,res)=>{
 
 })
 
-
+router.get('/isLike', authMiddleware,(req,res)=>{
+    const userName = res.locals.user.userName
+    console.log(req.body)
+    const {tutorName} = req.body;
+    const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? AND Tutor_userName=?'
+    const answerData = [userName, tutorName]
+    db.query(sql0, answerData, (err,data)=>{
+        if(err){
+            console.log(err)
+        }else if (data.length){
+            res.send({isLike:false})
+        }else if (!data.length){
+            res.send({isLike:true})
+        }
+    })
+})
 
 
 
