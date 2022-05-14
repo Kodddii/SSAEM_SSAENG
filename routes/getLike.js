@@ -10,6 +10,7 @@ router.patch('/like',authMiddleware,(req,res)=>{
     console.log(req.body)
     const {tutorName} = req.body;
     const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? AND Tutor_userName=?'
+    const sql1 =  'UPDATE Tutor SET `like` = `like` + 1 WHERE userName=?'
     const answerData = [userName, tutorName]
     db.query(sql0, answerData , (err,data0)=>{
         if(err) {
@@ -43,7 +44,7 @@ router.patch('/like',authMiddleware,(req,res)=>{
 
 
 
-    const sql1 =  'UPDATE Tutor SET `like` = `like` + 1 WHERE userName=?'
+    
 
 
 
