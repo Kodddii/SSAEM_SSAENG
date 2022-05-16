@@ -274,8 +274,10 @@ router.patch('/editUser', async (req, res) => {
       db.query(sql, [userEmail], (err, rows) => {
       if (rows.length !== 0) {  
         console.log("튜티데이블에 있다!!!")                          //if Tutee테이블에 있던 유저가 Tutor테이블로 이동하고 싶은거면
+
+        // const sql3 = 'DELETE FROM `Tutee` WHERE Tutee 
       const sql2 = 'INSERT INTO Tutor (`userEmail`,`userName`,`pwd`,`isTutor`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
-      db.query(sql2, [userEmail, userName, pwd, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime], (err, row) => {
+      db.query(sql2, [userEmail, userName, pwd, isTutor, userProfile, tag, language1, language2, language3, comment, contents, startTime, endTime], (err, row) => {
         if (err) {
           console.log(err)
         } else {
