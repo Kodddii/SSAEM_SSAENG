@@ -25,7 +25,7 @@ router.post('/single', upload.single('userProfile'), async (req, res) => {
 
 
 //회원가입
-router.post('/signUp', upload.single('userProfile'), async (req, res) => {
+router.post('/signUp', upload.single('userProfile'), (req, res) => {
   console.log(req.body)
   console.log(1);
   const userProfile = req.file?.location;
@@ -45,6 +45,8 @@ router.post('/signUp', upload.single('userProfile'), async (req, res) => {
     endTime,
   } = req.body;
   console.log(2);
+  console.log(isTutor);
+  console.log(typeof isTutor);
   
   //비밀번호 최소 문자 1, 숫자 1 포함 (8자리 이상) 정규식
   const pwdValidation = /^(?=.*[A-Za-z])(?=.*\d)[\w]{8,}$/;
@@ -73,7 +75,8 @@ router.post('/signUp', upload.single('userProfile'), async (req, res) => {
   //   return;
   // }
 
-  if (isTutor) {
+  if (isTutor === "1") {
+    
     const sql1 =
       'INSERT INTO Tutor (`userEmail`,`userName`,`pwd`,`isTutor`,`userProfile`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
     const datas1 = [
@@ -109,7 +112,7 @@ router.post('/signUp', upload.single('userProfile'), async (req, res) => {
     });
   })
     
-  } else {
+  } else if(isTutor=== "0") {
     console.log(4)
     const sql2 =
       'INSERT INTO Tutee (`userEmail`,`userName`,`pwd`,`isTutor`,`userProfile`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
@@ -337,7 +340,7 @@ router.patch('/editUser', async (req, res) => {
          console.log(isTutor)
          console.log(typeof isTutor)
          const userProfile = req.file?.location;
-         if (isTutor === "1") {
+         if (isTutor === 1) {
              const sql = 'SELECT * FROM Tutee WHERE userEmail=?';
              console.log('튜티테이블에 있나???????');
              db.query(sql, [userEmail], (ree, rows) => {
@@ -356,7 +359,7 @@ router.patch('/editUser', async (req, res) => {
                          }
                      });
                      console.log('선생님테이블에 저장하라고22');
-                 } else if (isTutor === "0"){
+                 } else if (isTutor === 0){
                      const sql1 =
                          'UPDATE Tutor SET userProfile=? WHERE userEmail=?';
                      db.query(sql1, [userProfile, userEmail], (err, row) => {
