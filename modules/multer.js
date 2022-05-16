@@ -1,47 +1,29 @@
-// const express = require('express');
-// const multer = require('multer');
-// const path = require('path');
-// const fs = require('fs');
-// const router = express.Router();
-// const res = require('express/lib/response');
-// const middleware = require('../middlewares/auth-middleware');
-// const {CLIENT_FOUND_ROWS} = require('mysql/lib/protocol/constants/client');
-// const jwt = require('jsonwebtoken');
-// const db = require('../config.js');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const AWS = require('aws-sdk');
+// require('dotenv').config();
 
-// const s3 = new AWS.S3({
-//     accessKeyId: process.env.S3_ACCESS_KEY,
-//     secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-//     region: process.env.S3_BUCKET_REGION,
-// });
 
-// // 이미지 파일 AWS S3 저장
-// router.post('/single', upload.single('imageUrl'), async (req, res) => {
-//   const file = await req.file;
-//   console.log(file);
-//   try {
-//     const result = await file.location;
-//     console.log(result)
-//     res.status(200).json({ imageUrl: result })
-//   } catch (e) {
+const s3 = new AWS.S3({
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    region: process.env.S3_BUCKET_REGION,
+});
 
-//   }
-// });
-
-// const upload = multer({
-//     storage: multerS3({
-//         s3: s3,
-//         bucket: 'friengles',
-//         contentType: multerS3.AUTO_CONTENT_TYPE,
-//         // acl: 'public-read',
-//         metadata: function (req, file, cb) {
-//             cb(null, {fieldName: file.fieldname});
-//         },
-//         key: function (req, file, cb) {
-//             cb(null, Date.now().toString());
-//         },
-//     }),
-// });
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'friengles',
+        contentType: multerS3.AUTO_CONTENT_TYPE,
+        acl: 'public-read',
+        metadata: function (req, file, cb) {
+            cb(null, {fieldName: file.fieldname});
+        },
+        key: function (req, file, cb) {
+            cb(null, Date.now().toString());
+        },
+    }),
+});
 
 
 // const {Post, Hashtag} = require('../consfig.js');
@@ -100,4 +82,4 @@
 //     }
 // });
 
-module.exports = router;
+module.exports = upload;
