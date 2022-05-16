@@ -231,7 +231,7 @@ router.post('/login', async (req, res) => {
                 res.send({ msg: 'success', token, userInfo });
             } else {
               console.log('pwd err');
-              res.send({ msg: '로그인 실패' });
+              res.send({ msg: '비밀번호가 틀렸습니다.' });
             }
             });
     }else{
@@ -252,12 +252,12 @@ router.post('/login', async (req, res) => {
               res.send({msg: 'success', token, userInfo});
             } else {
               console.log('여기다여기');
-              res.send({msg: '로그인 실패'});
+              res.send({msg: '비밀번호가 틀렸습니다'});
             }
           });
         } else {
         console.log('Id not found');
-        res.send({ msg: 'login failed' });
+        res.send({ msg: '존재하지 않는 아이디입니다.' });
         }
       }
      ) 
