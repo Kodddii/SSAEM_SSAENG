@@ -29,7 +29,7 @@ router.post('/addBooking/:tutorName',(req,res)=>{
         } else {
             res.status(201).send({ msg: 'success' });
         }
-    } )
+    })
 })
 
 //  예약된 리스트 불러오기 
