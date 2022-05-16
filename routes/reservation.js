@@ -29,7 +29,7 @@ router.post('/addBooking/:tutorName',(req,res)=>{
         } else {
             res.status(201).send({ msg: 'success' });
         }
-    } )
+    })
 })
 
 //  예약된 리스트 불러오기 
@@ -50,11 +50,11 @@ router.get('/getBooking/',(req,res,)=>{
     })
     }else{
         const sql2 ='SELECT * FROM TimeTable WHERE Tutee_userName=? ORDER BY Tutee_userName'
-        db.query(sql2, userName, (err,data2)=>{
+        db.query(sql2, userName, (err,datas1)=>{
         if(err) {
             console.log(err);
         }else{
-            res.status(201).send({msg:'success', data2})
+            res.status(201).send({msg:'success', datas1})
         }
     })
     }
