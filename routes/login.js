@@ -334,8 +334,10 @@ router.patch('/editUser', async (req, res) => {
      upload.single('userProfile'),
      async (req, res) => {
          const {userEmail, isTutor} = req.body;
+         console.log(isTutor)
+         console.log(typeof isTutor)
          const userProfile = req.file?.location;
-         if (isTutor) {
+         if (isTutor === "1") {
              const sql = 'SELECT * FROM Tutee WHERE userEmail=?';
              console.log('튜티테이블에 있나???????');
              db.query(sql, [userEmail], (ree, rows) => {
@@ -354,7 +356,7 @@ router.patch('/editUser', async (req, res) => {
                          }
                      });
                      console.log('선생님테이블에 저장하라고22');
-                 } else {
+                 } else if (isTutor === "0"){
                      const sql1 =
                          'UPDATE Tutor SET userProfile=? WHERE userEmail=?';
                      db.query(sql1, [userProfile, userEmail], (err, row) => {
