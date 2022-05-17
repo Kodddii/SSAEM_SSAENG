@@ -21,7 +21,7 @@ const reservationRouter = require("./routes/reservation")
 const getLikeRouter = require("./routes/getLike")
 const reviewRouter = require('./routes/review');
 const authRouter = require('./routes/auth');
-
+const requestMiddleware = (req, res, next) => { console.log( "ip:", req.ip, "domain:", req.rawHeaders[1], "method:", req.method, "Request URL:", req.originalUrl, "-", new Date() ); next(); };
 passportConfig();
 // app.set('port', 3000);
 const fs = require("fs")
@@ -95,6 +95,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // app.use(requestMiddleWare);
+app.use(requestMiddleware)
 
 
 
