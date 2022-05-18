@@ -84,7 +84,7 @@ router.get('/getBooking/',(req,res,)=>{
         if(err) {
             console.log(err);
         }else{
-            const datas1  = datas0.sort((a,b) => new moment(a.start).format('YYYYMMDD') - new moment(b.start).format('YYYYMMDD'))
+            const datas1  = datas0.sort((a,b) => new moment(a.start).format('x') - new moment(b.start).format('x'))
             res.status(201).send({msg:'success', datas1})
         }
     })
@@ -94,7 +94,7 @@ router.get('/getBooking/',(req,res,)=>{
         if(err) {
             console.log(err);
         }else{
-            const datas1  = datas0.sort((a,b) => new moment(a.start).format('YYYYMMDD') - new moment(b.start).format('YYYYMMDD'))
+            const datas1  = datas0.sort((a,b) => new moment(a.start).format('x') - new moment(b.start).format('x'))
             res.status(201).send({msg:'success', datas1})
         }
     })
