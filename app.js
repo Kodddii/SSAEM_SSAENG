@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportConfig = require('./passport');
 const peer = require("peer")
+const helmet = require("helmet")
 const {Server} = require("socket.io")
 
 const app_low = express();
@@ -94,7 +95,7 @@ app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-// app.use(requestMiddleWare);
+app.use(helmet());
 app.use(requestMiddleware)
 
 

@@ -19,18 +19,57 @@ router.post('/addBooking/:tutorName',(req,res)=>{
     const end2= end.replace(' (한국 표준시)','')
     const tutorName = req.params.tutorName
     const datas = [start2,end2,tutorName,userName]
-
+    const sql0 = 'SELECT * FROM TimeTable WHERE start=? AND end=? AND Tutor_userName=? AND Tutee_userName=?'
     const sql = 'INSERT INTO TimeTable (`start`,`end`,`Tutor_userName`,`Tutee_userName`) VALUES (?,?,?,?)'
-
-    db.query(sql,datas,(err,rows)=>{
-        if (err) {
-            console.log(err);
-            res.status(400).send({ msg: 'fail' });
-        } else {
-            res.status(201).send({ msg: 'success' });
+    db.query(sql0 , datas, (err,rows)=>{
+        if(err){
+            console.log(err)
+        }else if (rows.length){
+            res.status(400).send({msg:'이미 예약되어있는 시간입니다.'})
+        }else if (!rows.length){
+            db.query(sql,datas,(err,rows)=>{
+                if (err) {
+                    console.log(err);
+                    res.status(400).send({ msg: 'fail' });
+                } else {
+                    res.status(201).send({ msg: 'success' });
+                }
+            })
         }
     })
+    
 })
+
+// router.post('/addBooking/:tutorName',(req,res)=>{
+    
+//     const {end, start, userName} = req.body;
+//     console.log(req.body)
+//     console.log(req.params)
+//     for(let x of data){
+//         const sql = 'SELECT * FROM TimeTable WHERE '
+//     }
+
+
+//     const start2 = start.replace(' (한국 표준시)','')
+//     const end2= end.replace(' (한국 표준시)','')
+//     const tutorName = req.params.tutorName
+//     const datas = [start2,end2,tutorName,userName]
+
+//     const sql = 'INSERT INTO TimeTable (`start`,`end`,`Tutor_userName`,`Tutee_userName`) VALUES (?,?,?,?)'
+
+//     db.query(sql,datas,(err,rows)=>{
+//         if (err) {
+//             console.log(err);
+//             res.status(400).send({ msg: 'fail' });
+//         } else {
+//             res.status(201).send({ msg: 'success' });
+//         }
+//     })
+// })
+
+
+
+
 
 //  예약된 리스트 불러오기 
 router.get('/getBooking/',(req,res,)=>{
@@ -40,20 +79,22 @@ router.get('/getBooking/',(req,res,)=>{
     const userName = req.query.userName
     console.log(typeof isTutor)
     if (isTutor==='1'){
-        const sql1 ='SELECT * FROM TimeTable WHERE Tutor_userName=? ORDER BY Tutor_userName'
-        db.query(sql1, userName, (err,datas1)=>{
+        const sql1 ='SELECT * FROM TimeTable WHERE Tutor_userName=? '
+        db.query(sql1, userName, (err,datas0)=>{
         if(err) {
             console.log(err);
         }else{
+            const datas1  = datas0.sort((a,b) => new moment(a.start).format('YYYYMMDD') - new moment(b.start).format('YYYYMMDD'))
             res.status(201).send({msg:'success', datas1})
         }
     })
-    }else{
-        const sql2 ='SELECT * FROM TimeTable WHERE Tutee_userName=? ORDER BY Tutee_userName'
-        db.query(sql2, userName, (err,datas1)=>{
+    }else if(isTutor==='0'){
+        const sql2 ='SELECT * FROM TimeTable WHERE Tutee_userName=?'
+        db.query(sql2, userName, (err,datas0)=>{
         if(err) {
             console.log(err);
         }else{
+            const datas1  = datas0.sort((a,b) => new moment(a.start).format('YYYYMMDD') - new moment(b.start).format('YYYYMMDD'))
             res.status(201).send({msg:'success', datas1})
         }
     })
