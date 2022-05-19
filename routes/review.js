@@ -29,7 +29,7 @@ router.get('/getReview/:tutor_userName', async (req, res) => {
       res.send({ msg: 'fail' })
     } else {
       res.send({ data });
-      console.log(data)
+      // console.log(data)
     }
   });
 });
