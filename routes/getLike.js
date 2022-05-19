@@ -203,7 +203,7 @@ router.get('/getUserDetail/', (req,res)=>{
             }
         })
     }else{
-        const sql2 = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3,`like` FROM `Tutee` WHERE userName=?'
+        const sql2 = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3, FROM `Tutee` WHERE userName=?'
         db.query(sql2, userName, (err,data2)=>{
             if(err){
                 console.log(err)
