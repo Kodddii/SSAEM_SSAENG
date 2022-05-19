@@ -42,7 +42,7 @@ const credentials = {
 };
 
 const httpServer = http.createServer(app_low);
-const httpsServer = https.createServer(credentials,app)
+const httpsServer = https.createServer(credentials,app);
 
 // socket.io https 서버
 const io = SocketIO(httpsServer, {
