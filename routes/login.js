@@ -49,7 +49,7 @@ router.post('/signUp', upload.single('userProfile'), (req, res) => {
   console.log(typeof isTutor);
   
   //비밀번호 최소 문자 1, 숫자 1 포함 (8자리 이상) 정규식
-  const pwdValidation = /^(?=.*[A-Za-z])(?=.*\d)[\w]{8,20}$/;
+  const pwdValidation = /^(?=.*[A-Za-z])(?=.*[0-9])[a-zA-Z0-9!-_]{8,20}$/;
 
   if (!pwdValidation.test(pwd)) {
     res.status(400).send({

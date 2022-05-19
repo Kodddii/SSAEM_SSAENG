@@ -125,50 +125,50 @@ app.get('/', function (req, res) {
 
 
 
-// io.on("connection", (socket) => {
-// 	console.log(1)
-// 	// socket.emit("me", socket.id);
-// 	socket.on('joinRoom',(roomName)=>{
-// 		let rooms = io.sockets.adapter.rooms;
-//     	let room = rooms.get(roomName);
-// 		console.log(2)
-// 		if (room == undefined) {
-// 			console.log(2.1)
-// 			socket.join(roomName);
-// 			socket.emit("created");
-// 			console.log(2.2)
-// 		  } else if (room.size == 1) {
-// 			  console.log(2.3)
-// 			//room.size == 1 when one person is inside the room.
-// 			socket.join(roomName);
-// 			socket.emit("joined");
-// 			console.log(2.4)
-// 		  } else {
-// 			//when there are already two people inside the room.
-// 			socket.emit("full");
-// 			console.log(2.5)
-// 		  }
-// 		  console.log(rooms);
-// 		});
-// 	socket.on("disconnect", () => {
-// 		socket.broadcast.emit("callEnded")
-// 	});
-// 	socket.on("ready", function (roomName) {
-// 		socket.broadcast.to(roomName).emit("ready"); //Informs the other peer in the room.
-// 	  });
-// 	socket.on('sendingSignal',({signal, roomName})=>{
-// 		console.log(3)
-// 		console.log({signal,roomName})
-// 		socket.broadcast.emit("offer",signal)
-// 		console.log(3.5)
-// 	  })
-// 	socket.on("returningSignal", ({ signal, roomName }) => {
-// 		console.log({signal,roomName})
-// 		console.log(4)
-// 		io.to(roomName).emit("receivingSignal", signal)
-// 		console.log(4.5)
-// 	});
-// })
+io.on("connection", (socket) => {
+	console.log(1)
+	// socket.emit("me", socket.id);
+	socket.on('joinRoom',(roomName)=>{
+		let rooms = io.sockets.adapter.rooms;
+    	let room = rooms.get(roomName);
+		console.log(2)
+		if (room == undefined) {
+			console.log(2.1)
+			socket.join(roomName);
+			socket.emit("created");
+			console.log(2.2)
+		  } else if (room.size == 1) {
+			  console.log(2.3)
+			//room.size == 1 when one person is inside the room.
+			socket.join(roomName);
+			socket.emit("joined");
+			console.log(2.4)
+		  } else {
+			//when there are already two people inside the room.
+			socket.emit("full");
+			console.log(2.5)
+		  }
+		  console.log(rooms);
+		});
+	socket.on("disconnect", () => {
+		socket.broadcast.emit("callEnded")
+	});
+	socket.on("ready", function (roomName) {
+		socket.broadcast.to(roomName).emit("ready"); //Informs the other peer in the room.
+	  });
+	socket.on('sendingSignal',({signal, roomName})=>{
+		console.log(3)
+		console.log({signal,roomName})
+		socket.broadcast.emit("offer",signal)
+		console.log(3.5)
+	  })
+	socket.on("returningSignal", ({ signal, roomName }) => {
+		console.log({signal,roomName})
+		console.log(4)
+		io.to(roomName).emit("receivingSignal", signal)
+		console.log(4.5)
+	});
+})
 
 io.on('connection', (socket) => {
 		console.log(1)
@@ -281,5 +281,5 @@ httpServer.listen(httpPort, ()=>{
 	console.log('http서버가 켜졌어요 안녕 이건테스트야 제발되렴');
 });
 httpsServer.listen(httpsPort,() =>{
-	console.log('https서버가 켜졌어요')
+	console.log('https서버가 켜졌어요 이거맞나요?')
 });
