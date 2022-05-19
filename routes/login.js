@@ -112,7 +112,7 @@ router.post('/signUp', upload.single('userProfile'), (req, res) => {
     });
   })
     
-  } else if(isTutor=== "0") {
+  } else if(isTutor==="0") {
     console.log(4)
     const sql2 =
       'INSERT INTO Tutee (`userEmail`,`userName`,`pwd`,`isTutor`,`userProfile`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
@@ -268,7 +268,7 @@ router.post('/login', async (req, res) => {
 
 
 //유저 정보 불러오기
-router.get('/login/getUser', middleware, async (req, res) => {
+router.get('/login/getUser', middleware, (req, res) => {
   const { user } = res.locals;
   console.log(user.userName);
   res.send({
@@ -279,6 +279,79 @@ router.get('/login/getUser', middleware, async (req, res) => {
     comment: user.comment,
   });
 });
+
+//자기소개 수정 비밀번호 체크
+router.post('/mypage/pwdCheck', middleware, (req, res) => {
+  const {pwd} = req.body;
+  console.log(req.body);
+  const {userName} = res.locals.user;
+  console.log({userName});
+  const sql1 = 'SELECT * FROM Tutor WHERE userName=?';
+  const sql2 = 'SELECT * FROM Tutee WHERE userName=?';
+
+  db.query(sql1, userName, (err, datas1) => {
+    if (err) console.log(err);
+    if (datas1.length) {
+      console.log(datas1);
+      bcrypt.compare(pwd, datas1[0].pwd, (err, result) => {
+        if (result) {
+          res.send({msg: 'success'});
+        } else {
+          console.log('pwd err');
+          res.send({msg: '비밀번호가 틀렸습니다.'});
+        }
+      });
+    } else {
+      db.query(sql2, userName, (err, datas2) => {
+        if (err) console.log(err);
+
+        if (datas2.length) {
+          bcrypt.compare(pwd, datas2[0].pwd, (err, result) => {
+            if (result) {
+              res.send({msg: 'success'});
+            } else {
+              console.log('여기다여기');
+              res.send({msg: '비밀번호가 틀렸습니다'});
+            }
+          });
+        } 
+      });
+    }
+  });
+});
+
+//자기소개 불러오기
+router.get('/mypage/getUser', middleware, (req, res) => {
+const { user } = res.locals;
+  console.log(user.userName);
+  if (user.isTutor === 1) {
+  res.send({
+    userName: user.userName,
+    isTutor: user.isTutor,
+    userProfile: user.userProfile,
+    tag: user.tag,
+    language1: user.language1,
+    language2: user.language2,
+    language3: user.language3,
+    comment: user.comment,
+    contents: user.contents,
+    like: user.like
+  });
+} else {
+    res.send({
+    userName: user.userName,
+    isTutor: user.isTutor,
+    userProfile: user.userProfile,
+    tag: user.tag,
+    language1: user.language1,
+    language2: user.language2,
+    language3: user.language3,
+    comment: user.comment,
+    contents: user.contents
+  });
+ }
+})
+
 
 
 // 유저정보 수정
@@ -292,9 +365,17 @@ router.patch('/editUser', async (req, res) => {
       if (rows.length !== 0) {  
         console.log("튜티데이블에 있다!!!")                          //if Tutee테이블에 있던 유저가 Tutor테이블로 이동하고 싶은거면
 
-        // const sql3 = 'DELETE FROM `Tutee` WHERE Tutee 
+      const sql3 = 'DELETE FROM Tutee WHERE userEmail=?'
+      db.query(sql3, [userEmail], (err, rows) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log('튜티테이블에서 삭제됨');
+          res.status(200).send({msg: 'successfully deleted from Tutee!'});
+        }
+      });
       const sql2 = 'INSERT INTO Tutor (`userEmail`,`userName`,`pwd`,`isTutor`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
-      db.query(sql2, [userEmail, userName, pwd, isTutor, userProfile, tag, language1, language2, language3, comment, contents, startTime, endTime], (err, row) => {
+      db.query(sql2, [userEmail, userName, pwd, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime], (err, row) => {
         if (err) {
           console.log(err)
         } else {
@@ -308,7 +389,7 @@ router.patch('/editUser', async (req, res) => {
     const sql1 =
       'UPDATE Tutor SET userName=?, isTutor=?, pwd=?, tag=?, language1=?, language2=?, language3=?, comment=?, contents=?, startTime=?, endTime=? WHERE userEmail=?'
                                                           //Tutor 테이블에서 추가정보만 업데이트해준다
-    db.query(sql1, [userName, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime, userEmail], (err, row) => {
+    db.query(sql1, [userName, isTutor, pwd, tag, language1, language2, language3, comment, contents, startTime, endTime, userEmail], (err, row) => {
       if (err) {
         console.log(err);
       } else {

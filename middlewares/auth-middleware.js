@@ -2,17 +2,9 @@ const jwt = require("jsonwebtoken");
 const db = require('../config');
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers
-  
-  const [authType, authToken] = authorization.split(" ");
-  
-  if (!authToken || authType !== "Bearer") {
-    res.status(401).send({
-      errorMessage: '로그인 후 이용 가능한 기능입니다.',
-    });
-    return;
-  };
-
+  const authToken = req.cookies.token;
+  console.log(authToken)
+  console.log(req.cookies.token)
  
     const { userName } = jwt.verify(authToken, process.env.JWT_SECRET);
     console.log({ userName });
