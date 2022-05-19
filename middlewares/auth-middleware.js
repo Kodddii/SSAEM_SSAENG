@@ -2,10 +2,10 @@ const jwt = require("jsonwebtoken");
 const db = require('../config');
 
 module.exports = (req, res, next) => {
-  const authToken = req.cookies.token;
+  const authToken = req.headers.token
   console.log(req.headers)
   console.log(authToken)
-  console.log(req.cookies.token)
+  
  
     const { userName } = jwt.verify(authToken, process.env.JWT_SECRET);
     console.log({ userName });
