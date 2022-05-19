@@ -114,7 +114,7 @@ router.get('/getPopularTutor',(req,res)=>{
             console.log(err)
             res.status(400).send({msg:'fail'})
         }else{
-            console.log(data)
+            // console.log(data)
             res.status(200).send({msg:'success', data})
         }
     })
@@ -127,7 +127,7 @@ router.get('/getTutor',(req,res)=>{
             console.log(err)
             res.status(400).send({msg:'fail'})
         }else{
-            console.log(data)
+            // console.log(data)
             res.status(200).send({msg:'success',data})
         }
     })
@@ -159,7 +159,7 @@ router.get('/getTag', (req,res)=>{
     db.query(sql,(err,data)=>{
         if(err) console.log(err)
         else{
-            console.log(data)
+            // console.log(data)
             let arr =[]
             for (let x of data){
                 arr.push(x.tag)
@@ -176,6 +176,7 @@ router.get('/getTag', (req,res)=>{
             const arr4 = arr3.filter((element, index) => {
                 return arr3.indexOf(element) === index;
             });
+            const arr5 = arr4.slice(0,8)
             
             res.status(200).send(arr4.slice(0,8))
         }
