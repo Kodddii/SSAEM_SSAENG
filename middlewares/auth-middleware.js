@@ -3,6 +3,7 @@ const db = require('../config');
 
 module.exports = (req, res, next) => {
   const authToken = req.cookies.token;
+  console.log(req.headers)
   console.log(authToken)
   console.log(req.cookies.token)
  
