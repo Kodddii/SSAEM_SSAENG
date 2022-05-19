@@ -278,7 +278,7 @@ io.on('connection', (socket) => {
 // });
 
 httpServer.listen(httpPort, ()=>{
-	console.log('http서버가 켜졌어요');
+	console.log('http서버가 켜졌어요 이게맞나요');
 });
 httpsServer.listen(httpsPort,() =>{
 	console.log('https서버가 켜졌어요')
