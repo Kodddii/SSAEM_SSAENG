@@ -4,7 +4,8 @@ const bcrypt = require('bcrypt');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares'); // 내가 만든 사용자 미들웨어
 // const User = require('../models/users');
 const { Cookie } = require('express-session');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const db = require('../config')
 const router = express.Router();
 
 // * 회원 가입
@@ -85,10 +86,21 @@ router.get(
   }),
   // kakaoStrategy에서 성공한다면 콜백 실행
   (req, res) => {
-    // const token = jwt.sign({ id: tutee.userId }, 'my-secret-key');
-    console.log('로그인 확인!!!');
+    console.log("req 정보!!!!!!!!!!!!", req.user)
+    // const user = req.session;
+    // const sql1 = 'SELECT * FROM Tutee WHERE userId=?'
+    // const sql2 = 'SELECT * FROM Tutor WHERE userId=?'
+    // db.query(sql1, [userId], (err,data) => {
+    //   const token = jwt.sign( userId, process.env.JWT_SECRET);
+    //   res.send(
+    //     token,
+    //   )
+    // })
+    // console.log('로그인 확인!!!');
+    // console.log(user);
+    // console.log(userId)
     // res.send({
-    //   token,
+    //   user,
     // });
     res.redirect('/');
   },
