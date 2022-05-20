@@ -205,12 +205,12 @@ router.get('/getUserDetail/', (req,res)=>{
         })
     }else if(isTutor==='0'){
         const sql2 = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3 FROM `Tutee` WHERE userName=?'
-        db.query(sql2, userName, (err,data2)=>{
+        db.query(sql2, userName, (err,data)=>{
             if(err){
                 console.log(err)
                 res.status(400).send({msg:'fail'})  
             }else{
-                res.status(200).send({msg:'success', data2})
+                res.status(200).send({msg:'success', data})
             }
         })
     }
