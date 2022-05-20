@@ -176,9 +176,11 @@ router.get('/getTag', (req,res)=>{
             const arr4 = arr3.filter((element, index) => {
                 return arr3.indexOf(element) === index;
             });
-            const arr5 = arr4.slice(0,8)
+            const arr5 = arr4.filter(el => el.length>0)
+
+            const arr6 = arr5.slice(0,8)
             
-            res.status(200).send(arr4.slice(0,8))
+            res.status(200).send(arr6)
         }
     })
 })
