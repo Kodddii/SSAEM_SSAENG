@@ -193,7 +193,6 @@ router.get('/getTag', (req,res)=>{
 // 유저상세페이지
 router.get('/getUserDetail/', (req,res)=>{
     const{userName,isTutor} = req.query
-    console.log(userName)
     if(isTutor==='1'){
         const sql1 = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3,`like` FROM `Tutor` WHERE userName=?'
         db.query(sql1, userName, (err,data)=>{
@@ -205,7 +204,7 @@ router.get('/getUserDetail/', (req,res)=>{
             }
         })
     }else if(isTutor==='0'){
-        const sql2 = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3, FROM `Tutee` WHERE userName=?'
+        const sql2 = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3 FROM `Tutee` WHERE userName=?'
         db.query(sql2, userName, (err,data2)=>{
             if(err){
                 console.log(err)
