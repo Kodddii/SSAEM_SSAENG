@@ -55,7 +55,7 @@ const credentials = {
 // };
 
 const httpServer = http.createServer(app_low);
-const httpsServer = https.createServer(credentials,app)
+const httpsServer = https.createServer(credentials,app);
 
 // socket.io https 서버
 const io = new Server(httpsServer, {
@@ -81,8 +81,8 @@ app.use(
     saveUninitialized: false,
     secret: process.env.COOKIE_SECRET,
     cookie: {
-      httpOnly: true,
-      secure: false,
+      httpOnly: false,
+      secure: true,
     },
   }),
 );
@@ -97,6 +97,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(helmet());
 app.use(requestMiddleware)
+
 
 
 
@@ -173,6 +174,8 @@ io.on("connection", (socket) => {
 io.on('connection', (socket) => {
 		console.log(1)
 		socket.on('join-room', (roomId, userId) => {
+		let rooms = io.sockets.adapter.rooms;
+		let room = rooms.get(roomId)
 		console.log(2)
 		socket.join(roomId);
 		console.log(2.1)
@@ -186,7 +189,7 @@ io.on('connection', (socket) => {
 	  });
 	});
   });
-  
+//   socket.disconnect();
 
 
 

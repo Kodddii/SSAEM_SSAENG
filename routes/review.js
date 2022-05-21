@@ -13,8 +13,8 @@ router.get('/getReview', async (req, res) => {
       console.log(err);
       res.send({ msg: 'fail' });
     } else {
-      console.log(data);
-      res.send({data});
+      // console.log(data);
+      res.send({ data });
     }
   })
 })
@@ -28,15 +28,15 @@ router.get('/getReview/:tutor_userName', async (req, res) => {
       console.log(err);
       res.send({ msg: 'fail' })
     } else {
-      res.send({data});
-      console.log(data)
+      res.send({ data });
+      // console.log(data)
     }
   });
 });
 
 // 리뷰 작성
-router.post('/addReview', middleware, async (req, res) => {
-  const tutee_userName = res.locals.user.userName;
+router.post('/addReview', async (req, res) => {
+  // const tutee_userName = res.locals.user.userName;
   const { userName, rate, text } = req.body;
   // console.log(tutee_userName, req.body);
   const param = [userName, tutee_userName, rate, text];
@@ -55,49 +55,72 @@ router.post('/addReview', middleware, async (req, res) => {
 });
 
 // 리뷰 수정
-router.patch('/editReview', middleware, async (req, res) => {
-  const tutee_userName = res.locals.user.userName;
+router.patch('/editReview', async (req, res) => {
+  // const tutee_userName = res.locals.user.userName;
   const { reviewId, rate, text } = req.body;
-  console.log(tutee_userName, req.body)
-  const sql = 'SELECT * FROM Review WHERE tutee_userName=?'
-  db.query(sql, [tutee_userName], (err, rows) => {
-    if (rows.length !== 0) {
-      // const sql = 'SELECT * FROM review WHERE reviewId=?'
-      const sql = 'UPDATE Review SET rate=?, text=? WHERE reviewId=?'
-      db.query(sql, [rate, text, reviewId], (err, datas) => {
-        if (err) {
-          console.log(err)
-        } else {
-          res.send({ msg: 'success' })
-        }
+  console.log(req.body)
+  const sql1 = 'UPDATE Review SET rate=?, text=? WHERE reviewId=?'
+  db.query(sql1, [rate, text, reviewId], (err, datas) => {
+    if (err) {
+      console.log(err)
+    } else {
+      // console.log(datas)
+      const sql2 = 'SELECT * FROM Review WHERE reviewId=?'
+      db.query(sql2, reviewId, (err, data) => {
+        res.send({ data })
       })
     }
+    // const sql = 'SELECT * FROM Review WHERE tutee_userName=?'
+    // db.query(sql, [tutee_userName], (err, rows) => {
+    //   if (rows.length !== 0) {
+    //     // const sql = 'SELECT * FROM review WHERE reviewId=?'
+    //     const sql = 'UPDATE Review SET rate=?, text=? WHERE reviewId=?'
+    //     db.query(sql, [rate, text, reviewId], (err, datas) => {
+    //       if (err) {
+    //         console.log(err)
+    //       } else {
+    //         res.send({ msg: 'success' })
+    //       }
+    //     })
+    //   }
   });
 });
 
 // 리뷰 삭제
-router.delete('/deleteReview', middleware, async (req, res) => {
-  const tutee_userName = res.locals.user.userName;
+router.delete('/deleteReview', async (req, res) => {
+  // const tutee_userName = res.locals.user.userName;
   const { reviewId } = req.body;
-  const sql = 'SELECT * FROM Review WHERE tutee_userName=?'
-  db.query(sql, [tutee_userName], (err, rows) => {
-    if (rows.length !== 0) {
-      console.log(rows)
-      const sql = 'DELETE FROM Review WHERE reviewId=?'
-
-      db.query(sql, [reviewId], (err, data) => {
-        if (data == undefined) {
-          console.log(err);
-          console.log(data);
-          res.send({ msg: 'fail' })
-        } else {
-          console.log(data)
-          res.send({ msg: 'success' })
-        }
-      })
+  const sql1 = 'DELETE FROM Review WHERE reviewId=?'
+  db.query(sql1, [reviewId], (err, data) => {
+    if (data.affectedRows == 0) {
+      console.log(err);
+      res.send({ msg: 'fail, 일치하는 reviewId가 없거나 이미 삭제된 내용입니다.' })
+      return
     } else {
-      res.send({ msg: 'fail' })
+      const sql2 = 'SELECT * FROM Review WHERE reviewId=?'
+      db.query(sql2, reviewId, (err, data) => {
+        res.send({ msg: 'success' })
+      })
     }
+    // const sql = 'SELECT * FROM Review WHERE tutee_userName=?'
+    // db.query(sql, [tutee_userName], (err, rows) => {
+    //   if (rows.length !== 0) {
+    //     console.log(rows)
+    //     const sql = 'DELETE FROM Review WHERE reviewId=?'
+
+    //     db.query(sql, [reviewId], (err, data) => {
+    //       if (data == undefined) {
+    //         console.log(err);
+    //         console.log(data);
+    //         res.send({ msg: 'fail' })
+    //       } else {
+    //         console.log(data)
+    //         res.send({ msg: 'success' })
+    //       }
+    //     })
+    //   } else {
+    //     res.send({ msg: 'fail' })
+    //   }
   });
 });
 

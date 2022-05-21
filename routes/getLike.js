@@ -114,7 +114,7 @@ router.get('/getPopularTutor',(req,res)=>{
             console.log(err)
             res.status(400).send({msg:'fail'})
         }else{
-            console.log(data)
+            // console.log(data)
             res.status(200).send({msg:'success', data})
         }
     })
@@ -127,7 +127,7 @@ router.get('/getTutor',(req,res)=>{
             console.log(err)
             res.status(400).send({msg:'fail'})
         }else{
-            console.log(data)
+            // console.log(data)
             res.status(200).send({msg:'success',data})
         }
     })
@@ -159,7 +159,7 @@ router.get('/getTag', (req,res)=>{
     db.query(sql,(err,data)=>{
         if(err) console.log(err)
         else{
-            console.log(data)
+            // console.log(data)
             let arr =[]
             for (let x of data){
                 arr.push(x.tag)
@@ -176,8 +176,11 @@ router.get('/getTag', (req,res)=>{
             const arr4 = arr3.filter((element, index) => {
                 return arr3.indexOf(element) === index;
             });
+            const arr5 = arr4.filter(el => el.length>0)
+
+            const arr6 = arr5.slice(0,8)
             
-            res.status(200).send(arr4.slice(0,8))
+            res.status(200).send(arr6)
         }
     })
 })
@@ -190,7 +193,6 @@ router.get('/getTag', (req,res)=>{
 // 유저상세페이지
 router.get('/getUserDetail/', (req,res)=>{
     const{userName,isTutor} = req.query
-    console.log(userName)
     if(isTutor==='1'){
         const sql1 = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3,`like` FROM `Tutor` WHERE userName=?'
         db.query(sql1, userName, (err,data)=>{
@@ -201,14 +203,14 @@ router.get('/getUserDetail/', (req,res)=>{
                 res.status(200).send({msg:'success',data})
             }
         })
-    }else{
-        const sql2 = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3,`like` FROM `Tutee` WHERE userName=?'
-        db.query(sql2, userName, (err,data2)=>{
+    }else if(isTutor==='0'){
+        const sql2 = 'SELECT userId,userName,userEmail,isTutor,userProfile,tag,contents,startTime,endTime,comment,language1,language2,language3 FROM `Tutee` WHERE userName=?'
+        db.query(sql2, userName, (err,data)=>{
             if(err){
                 console.log(err)
                 res.status(400).send({msg:'fail'})  
             }else{
-                res.status(200).send({msg:'success', data2})
+                res.status(200).send({msg:'success', data})
             }
         })
     }
