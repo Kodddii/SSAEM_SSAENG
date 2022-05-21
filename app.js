@@ -175,7 +175,7 @@ io.on('connection', (socket) => {
 		console.log(1)
 		socket.on('join-room', (roomId, userId) => {
 		let rooms = io.sockets.adapter.rooms;
-		let room = rooms.get
+		let room = rooms.get(roomId)
 		console.log(2)
 		socket.join(roomId);
 		console.log(2.1)
