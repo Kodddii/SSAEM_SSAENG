@@ -87,22 +87,23 @@ router.get(
   // kakaoStrategy에서 성공한다면 콜백 실행
   (req, res) => {
     console.log("req 정보!!!!!!!!!!!!", req.user)
-    // const user = req.session;
-    // const sql1 = 'SELECT * FROM Tutee WHERE userId=?'
+    const userId = req.user[0].userId;
+    const sql1 = 'SELECT * FROM Tutee WHERE userId=?'
     // const sql2 = 'SELECT * FROM Tutor WHERE userId=?'
-    // db.query(sql1, [userId], (err,data) => {
-    //   const token = jwt.sign( userId, process.env.JWT_SECRET);
-    //   res.send(
-    //     token,
-    //   )
-    // })
+    db.query(sql1, [userId], (err,data) => {
+      console.log(data)
+      const token = jwt.sign( userId, process.env.JWT_SECRET);
+      res.send(
+        token,
+      )
+    })
     // console.log('로그인 확인!!!');
     // console.log(user);
     // console.log(userId)
     // res.send({
     //   user,
     // });
-    res.redirect('/');
+    // res.redirect('/');
   },
 );
 

@@ -17,8 +17,8 @@ module.exports = () => {
   //? 즉 로그인 과정을 할때만 실행
   passport.serializeUser((user, done) => {
     // req.login(user, ...)의 user가 일로 와서 값을 이용할수 있는 것이다.
-    console.log('직렬화!!!!!!', user[0].userId);
-    done(null, user[0].userId);
+    console.log('직렬화!!!!!!', user[0]);
+    done(null, user);
     // req.session객체에 어떤 데이터를 저장할 지 선택.
     // user.id만을 세션객체에 넣음. 사용자의 온갖 정보를 모두 들고있으면,
     // 서버 자원낭비기 때문에 사용자 아이디만 저장 그리고 데이터를 deserializeUser애 전달함

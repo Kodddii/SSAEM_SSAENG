@@ -1,4 +1,4 @@
-const res = require('express/lib/response');
+// const res = require('express/lib/response');
 const passport = require('passport');
 const KakaoStrategy = require('passport-kakao').Strategy;
 const db = require('../config')
@@ -33,18 +33,18 @@ module.exports = () => {
                   console.log(data, 'tutor 회원가입 되어있음!!!')
                   done(null, data)
                 } else {
-                  // db.query('INSERT INTO `Tutee`(`userEmail`, `userName`, `isTutor`) VALUES (?,?,?)',
-                  //   param, (err, data) => {
-                  //     console.log(data, '회원가입 진행!!!')
-                  //     done(null, data)
-                  //   })
-                  const userEmail = profile._json && profile._json.kakao_account.email
-                  const userName = profile.displayName
-                  console.log(userEmail, userName)
-                  // res.send({
-                  //   userEmail,
-                  //   userName,
-                  // })
+                  db.query('INSERT INTO `Tutee`(`userEmail`, `userName`, `isTutor`) VALUES (?,?,?)',
+                    param, (err, data) => {
+                      console.log(data, '회원가입 진행!!!')
+                      done(null, data)
+                    })
+                  // const userEmail = profile._json && profile._json.kakao_account.email
+                  // const userName = profile.displayName
+                  // console.log(userEmail, userName)
+                  // // res.send({
+                  // //   userEmail,
+                  // //   userName,
+                  // // })
                   console.log(data)
                   done(null, data)
                 }
