@@ -421,38 +421,14 @@ router.patch('/editUser', async (req, res) => {
          console.log(isTutor)
          console.log(typeof isTutor)
          const userProfile = req.file?.location;
-         if (isTutor === 1) {
-             const sql = 'SELECT * FROM Tutee WHERE userEmail=?';
-             console.log('튜티테이블에 있나???????');
-             db.query(sql, [userEmail], (ree, rows) => {
-                 if (rows.length !== 0) {
-                     console.log('튜티테이블에 있당');
-                     const sql2 =
-                         'INSERT INTO Tutor (`userProfile`) VALUES (?)';
-                     db.query(sql2, [userProfile], (err, row) => {
-                         if (err) {
-                             console.log(err);
-                         } else {
-                             console.log('윤하짱짱22');
-                             res.status(200).send({
-                                 msg: 'successfully uploaded!!',
-                             });
-                         }
-                     });
-                     console.log('선생님테이블에 저장하라고22');
-                 } else if (isTutor === 0){
-                     const sql1 =
-                         'UPDATE Tutor SET userProfile=? WHERE userEmail=?';
-                     db.query(sql1, [userProfile, userEmail], (err, row) => {
-                         if (err) {
-                             console.log(err);
-                         } else {
-                             res.status(200).send({
-                                 msg: 'successfully updated!!',
-                             });
-                         }
-                     });
-                 }
+         if (isTutor === "1") {
+             const sql2 = 'UPDATE Tutor SET userProfile=? WHERE userEmail=?';
+             db.query(sql2, [userProfile, userEmail], (err, row) => {
+               if (err) {
+                 console.log(err);
+               } else {
+                 res.status(200).send({msg: 'successfully updated!!'});
+               }
              });
          } else {
            const sql2 = 'UPDATE Tutee SET userProfile=? WHERE userEmail=?';
