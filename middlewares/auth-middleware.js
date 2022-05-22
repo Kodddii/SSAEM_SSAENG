@@ -4,6 +4,7 @@ const db = require('../config');
 module.exports = (req, res, next) => {
   console.log(req.headers)
   console.log(req.cookies)
+  console.log(req.header.cookies)
   console.log(req.headers.cookies)
   const authToken = req.cookies.token
   // console.log(req.headers)
