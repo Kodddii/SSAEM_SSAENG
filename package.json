@@ -45,6 +45,7 @@
     "passport-local": "^1.0.0",
     "passport-naver-v2": "^2.0.8",
     "peer": "^0.6.1",
+    "request": "^2.88.2",
     "sequelize-cli": "^6.4.1",
     "socket.io": "^4.5.0",
     "uuid": "^7.0.3"
