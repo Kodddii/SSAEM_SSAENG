@@ -16,10 +16,10 @@ module.exports = () => {
       * profile: 카카오가 보내준 유저 정보. profile의 정보를 바탕으로 회원가입
       */
       async (accessToken, refreshToken, profile, done) => {
-        // console.log('kakao profile', profile);
+        console.log('kakao profile', profile);
         // console.log('Token', accessToken, refreshToken);
         // console.log(profile._json && profile._json.kakao_account.email)
-        const param = [profile._json && profile._json.kakao_account.email, profile.displayName, false]
+        // const param = [profile._json && profile._json.kakao_account.email, profile.displayName, false]
         try {
           const sql1 = 'SELECT * FROM Tutee WHERE userEmail=?'
           const sql2 = 'SELECT * FROM Tutee WHERE userEmail=?'
@@ -33,20 +33,12 @@ module.exports = () => {
                   console.log(data, 'tutor 회원가입 되어있음!!!')
                   done(null, data)
                 } else {
-                  db.query('INSERT INTO `Tutee`(`userEmail`, `userName`, `isTutor`) VALUES (?,?,?)',
-                    param, (err, data) => {
-                      console.log(data, '회원가입 진행!!!')
-                      done(null, data)
-                    })
-                  // const userEmail = profile._json && profile._json.kakao_account.email
-                  // const userName = profile.displayName
-                  // console.log(userEmail, userName)
-                  // // res.send({
-                  // //   userEmail,
-                  // //   userName,
-                  // // })
-                  console.log(data)
-                  done(null, data)
+                  console.log('회원가입 XXXXXXXXX!!!')
+                  data = [{
+                    userEmail: profile._json && profile._json.kakao_account.email,
+                    userName: profile.displayName,
+                  }]
+                  done(null, data)                  
                 }
               })
             }

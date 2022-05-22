@@ -1,78 +1,10 @@
 const express = require('express');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
-const { isLoggedIn, isNotLoggedIn } = require('./middlewares'); // 내가 만든 사용자 미들웨어
-// const User = require('../models/users');
 const { Cookie } = require('express-session');
 const jwt = require('jsonwebtoken');
 const db = require('../config')
 const router = express.Router();
-
-// * 회원 가입
-// 사용자 미들웨어 isNotLoggedIn을 통과해야 async (req, res, next) => 미들웨어 실행
-// router.post('/signup', isNotLoggedIn, async (req, res, next) => {
-//   const { email, nickname, password } = req.body; // 프론트에서 보낸 폼데이터를 받는다.
-//   console.log(req.body)
-//   try {
-//     // 기존에 이메일로 가입한 사람이 있나 검사 (중복 가입 방지)
-//     const exUser = await User.findOne({ where: { email } });
-//     if (exUser) {
-//       return res.redirect('/join?error=exist'); // 에러페이지로 바로 리다이렉트
-//     }
-//     // 정상적인 회원가입 절차면 해시화
-//     const hash = await bcrypt.hash(password, 12);
-//     // DB에 해당 회원정보 생성
-//     await User.create({
-//       email,
-//       nickname,
-//       password: hash, // 비밀번호에 해시문자를 넣어준다.
-//     });
-//     return res.redirect('/');
-//   } catch (error) {
-//     console.error(error);
-//     return next(error);
-//   }
-// });
-
-// //* 로그인 요청
-// // 사용자 미들웨어 isNotLoggedIn 통과해야 async (req, res, next) => 미들웨어 실행
-// router.post('/login', isNotLoggedIn, (req, res, next) => {
-//   //? local로 실행이 되면 localstrategy.js를 찾아 실행한다.
-//   passport.authenticate('local', (authError, user, info) => {
-//     //? (authError, user, info) => 이 콜백 미들웨어는 localstrategy에서 done()이 호출되면 실행된다.
-//     //? localstrategy에 done()함수에 로직 처리에 따라 1,2,3번째 인자에 넣는 순서가 달랐는데 그 이유가 바로 이것이다.
-//     // done(err)가 처리된 경우
-//     if (authError) {
-//       console.error(authError);
-//       return next(authError); // 에러처리 미들웨어로 보낸다.
-//     }
-//     // done(null, false, { message: '비밀번호가 일치하지 않습니다.' }) 가 처리된 경우
-//     if (!user) {
-//       // done()의 3번째 인자 { message: '비밀번호가 일치하지 않습니다.' }가 실행
-//       return res.redirect(`/?loginError=${info.message}`);
-//     }
-//     //? 로그인이 성공되면 (user가 false가 아닌 경우), passport/index.js로 가서 실행시킨다.
-//     return req.login(user, loginError => {
-//       //? loginError => 미들웨어는 passport/index.js의 passport.deserializeUser((id, done) => 가 done()이 되면 실행하게 된다.
-//       // 만일 done(err) 가 됬다면,
-//       if (loginError) {
-//         console.error(loginError);
-//         return next(loginError);
-//       }
-//       // done(null, user)로 로직이 성공적이라면, 세션에 사용자 정보를 저장해놔서 로그인 상태가 된다.
-//       return res.redirect('/');
-//     });
-//   })(req, res, next); //! 미들웨어 내의 미들웨어에는 콜백을 실행시키기위해 (req, res, next)를 붙인다.
-// });
-
-// //* 로그아웃 (isLoggedIn 상태일 경우)
-// router.get('/logout', isLoggedIn, (req, res) => {
-//   // req.user (사용자 정보가 안에 들어있다. 당연히 로그인되어있으니 로그아웃하려는 거니까)
-//   console.log(req.user)
-//   req.logout();
-//   req.session.destroy(); // 로그인인증 수단으로 사용한 세션쿠키를 지우고 파괴한다. 세션쿠키가 없다는 말은 즉 로그아웃 인 말.
-//   res.redirect('/');
-// });
 
 //* 카카오로 로그인하기 라우터 ***********************
 //? /kakao로 요청오면, 카카오 로그인 페이지로 가게 되고, 카카오 서버를 통해 카카오 로그인을 하게 되면, 다음 라우터로 요청한다.
@@ -86,24 +18,34 @@ router.get(
   }),
   // kakaoStrategy에서 성공한다면 콜백 실행
   (req, res) => {
+    const sql1 = 'SELECT * FROM Tutor WHERE userEmail=?';
+    const sql2 = 'SELECT * FROM Tutee WHERE userEmail=?';
     console.log("req 정보!!!!!!!!!!!!", req.user)
-    const userId = req.user[0].userId;
-    const sql1 = 'SELECT * FROM Tutee WHERE userId=?'
-    // const sql2 = 'SELECT * FROM Tutor WHERE userId=?'
-    db.query(sql1, [userId], (err,data) => {
-      console.log(data)
-      const token = jwt.sign( userId, process.env.JWT_SECRET);
-      res.send(
-        token,
-      )
-    })
-    // console.log('로그인 확인!!!');
-    // console.log(user);
-    // console.log(userId)
+    const userEmail = req.user[0].userEmail
+    const userName = req.user[0].userName
+    const token = jwt.sign({ userName }, process.env.JWT_SECRET)
+    console.log(userEmail, userName, token)
     // res.send({
-    //   user,
+    //   userEmail,
+    //   userName,
     // });
-    // res.redirect('/');
+    db.query(sql1, [userEmail], (err, data) => {
+      if (data.length !== 0) {
+        res.send(token)
+      } else {
+        db.query(sql2, [userEmail], (err, data) => {
+          if (data.length !== 0) {
+            res.send(token)
+          } else {
+            console.log('회원가입 XXXXXXXXX!!!')
+            res.send({
+              userEmail,
+              userName,
+            })
+          }
+        })
+      }
+    });
   },
 );
 
@@ -113,12 +55,40 @@ router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 
 router.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }),
   //? 그리고 passport 로그인 전략에 의해 googleStrategy로 가서 구글계정 정보와 DB를 비교해서 회원가입시키거나 로그인 처리하게 한다.
   (req, res) => {
-    // const token = jwt.sign({ userId: User.userId }, 'my-secret-key');
-    console.log('로그인 확인!!!');
+    const sql1 = 'SELECT * FROM Tutor WHERE userEmail=?';
+    const sql2 = 'SELECT * FROM Tutee WHERE userEmail=?';
+    console.log("req 정보!!!!!!!!!!!!", req.user)
+    const userEmail = req.user[0].userEmail
+    const userName = req.user[0].userName
+    const token = jwt.sign({ userName }, process.env.JWT_SECRET)
+    console.log(userEmail, userName, token)
+    db.query(sql1, [userEmail], (err, data) => {
+      if (data.length !== 0) {
+        res.send(token)
+      } else {
+        db.query(sql2, [userEmail], (err, data) => {
+          if (data.length !== 0) {
+            res.send(token)
+          } else {
+            console.log('회원가입 XXXXXXXXX!!!')
+            res.send({
+              userEmail,
+              userName,
+            })
+          }
+        })
+      }
+    });
+    // console.log('로그인 확인!!!');
+    // console.log("req 정보!!!!!!!!!!!!", req.user)
+    // userEmail = req.user.userEmail
+    // userName = req.user.userName
+    // console.log(userEmail, userName)
     // res.send({
-    //   token,
+    //   userEmail,
+    //   userName,
     // });
-    res.redirect('/');
+    // res.redirect('/');
   },
 );
 

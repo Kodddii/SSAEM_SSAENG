@@ -1,25 +1,23 @@
-// 네이버 Papago 언어감지 API 예제
 const express = require('express');
 const router = express.Router();
-const request = require('request')
-// const api_url = "https://openapi.naver.com/v1/papago/detectLangs";
-// const client_id = process.env.NAVER_TRANSLATE_ID;
-// const client_secret = process.env.NAVER_TRANSLATE_SECRET;
 // const query = "nice to meet you";
 
-router.post('/translate', (req, res, next) => {
-  console.log('translate')
-})
+// router.post('/translate', (req, res) => {
+//   console.log('translate')
+//   res.redirect('/')
+// })
 
 router.get('/translate', function (req, res) {
-  let api_url = 'https://openapi.naver.com/v1/papago/n2mt';
-  let options = {
+  const request = require('request')
+  const api_url = 'https://openapi.naver.com/v1/papago/n2mt';
+  console.log(req)
+  const options = {
     url: api_url,
     form: {
       source: "en",
       target: "ko",
       // text: query,
-      text: req.query.text,
+      text: req.query,
     },
     headers: {
       'X-Naver-Client-Id': process.env.NAVER_TRANSLATE_ID,
@@ -28,8 +26,10 @@ router.get('/translate', function (req, res) {
   };
   request.post(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log(options)
-      console.log(body)
+      console.log('1', options)
+      console.log('2', body)
+      console.log('3', response)
+      console.log('4', req)
       res.writeHead(200, { 'Content-Type': 'text/json;charset=utf-8' });
       res.end(body);
     } else {
