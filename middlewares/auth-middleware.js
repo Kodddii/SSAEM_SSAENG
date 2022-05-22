@@ -3,6 +3,7 @@ const db = require('../config');
 
 module.exports = (req, res, next) => {
   const authToken = req.headers.token
+  
   // console.log(req.headers)
   // console.log(authToken)
   
