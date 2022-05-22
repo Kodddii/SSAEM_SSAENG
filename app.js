@@ -177,11 +177,19 @@ io.on('connection', (socket) => {
 		let rooms = io.sockets.adapter.rooms;
 		let room = rooms.get(roomId)
 		console.log(2)
-		socket.join(roomId);
-		console.log(2.1)
+		if(room == undefined){
+			console.log(2.1)
+			socket.join(roomId)
+			console.log(2.2)
+		}else if(room.size==1){
+			console.log(2.3)
+			socket.join(roomId)
+			console.log(2.4)
+		}else{
+			socket.emit('full')
+		}
 		io.to(roomId).emit('user-connected', userId);
 		console.log(2.2)
-	  
 	  	socket.on('disconnect', () => {
 		console.log(3)
 		io.to(roomId).emit('user-disconnected', userId);

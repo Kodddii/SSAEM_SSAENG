@@ -183,7 +183,6 @@ router.patch('/delAllNoti',authMiddleware,(req,res)=>{
         })
     }
     res.status(200).send({msg:'success'})
-
 })
 
 
