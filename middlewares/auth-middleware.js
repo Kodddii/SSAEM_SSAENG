@@ -2,8 +2,14 @@ const jwt = require("jsonwebtoken");
 const db = require('../config');
 
 module.exports = (req, res, next) => {
+<<<<<<< HEAD
   const authToken = req.headers.token
   
+=======
+
+  const authToken = req.headers.token
+
+>>>>>>> d1328a8bf53a9c195d2c6cbff3c707318afd1b71
   // console.log(req.headers)
   // console.log(authToken)
   
