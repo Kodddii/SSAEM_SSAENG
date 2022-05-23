@@ -9,25 +9,26 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportConfig = require('./passport');
-const peer = require("peer")
-const helmet = require("helmet")
-const {Server} = require("socket.io")
+const peer = require("peer");
+const helmet = require("helmet");
+const {Server} = require("socket.io");
 
 const app_low = express();
 const app = express();
 
 
 const loginRouter = require("./routes/login");
-const reservationRouter = require("./routes/reservation")
-const getLikeRouter = require("./routes/getLike")
+const reservationRouter = require("./routes/reservation");
+const getLikeRouter = require("./routes/getLike");
 const reviewRouter = require('./routes/review');
 const authRouter = require('./routes/auth');
+const translateRouter = require('./routes/translate');
 const requestMiddleware = (req, res, next) => { console.log( "ip:", req.ip, "domain:", req.rawHeaders[1], "method:", req.method, "Request URL:", req.originalUrl, "-", new Date() ); next(); };
 passportConfig();
 // app.set('port', 3000);
-const fs = require("fs")
-const http = require("http")
-const https = require("https")
+const fs = require("fs");
+const http = require("http");
+const https = require("https");
 
 
 //////////////////////////////////////////////////////////////////
@@ -115,7 +116,7 @@ app_low.use((req,res,next)=>{
 	}
   })
 //라우터 연결
-app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRouter);
+app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRouter, translateRouter);
 
 // app.use(express.static("assets"));
 
