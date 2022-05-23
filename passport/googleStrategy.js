@@ -15,7 +15,7 @@ module.exports = () => {
         // const param = [email._json.email, email.displayName, false]
         try {
           const sql1 = 'SELECT * FROM Tutee WHERE userEmail=?'
-          const sql2 = 'SELECT * FROM Tutee WHERE userEmail=?'
+          const sql2 = 'SELECT * FROM Tutor WHERE userEmail=?'
           db.query(sql1, [email._json.email], (err, data) => {
             if (data.length !== 0) {
               console.log(data, 'tutee 회원가입 되어있음!!!')
