@@ -4,8 +4,9 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const loginRouter = require("./routes/login");
-const reservationRouter = require("./routes/reservation")
-const getLikeRouter = require("./routes/getLike")
+const reservationRouter = require("./routes/reservation");
+const getLikeRouter = require("./routes/getLike");
+const translateRouter = require("./routes/translate")
 const path = require('path');
 const morgan = require('morgan');
 const passport = require('passport');
@@ -88,7 +89,7 @@ app.use(express.urlencoded({ extended: false }));
 //  }
 //   })
 //라우터 연결
-app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRouter);
+app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRouter, translateRouter);
 // app.use(express.static("assets"));
 app.get('/', function (req, res) {
   res.send('메인페이지 입니다!!!')
@@ -96,6 +97,6 @@ app.get('/', function (req, res) {
 // app.listen(3000, () => {
 //   console.log("3000번 포트에서 대기중!");
 // });
-app.listen(3000, () => {
-  console.log("3000번 포트에서 대기중!");
+app.listen(5000, () => {
+  console.log("5000번 포트에서 대기중!");
 });

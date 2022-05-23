@@ -215,6 +215,7 @@ router.get('/getUserDetail/', (req,res)=>{
         })
     }
 })
+// 자신이 좋아요한 선생님 리스트
 router.get('/getLikeList',authMiddleware,(req,res)=>{
     const userName = res.locals.user.userName
 

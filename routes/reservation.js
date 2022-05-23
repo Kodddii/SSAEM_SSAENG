@@ -5,7 +5,9 @@ const res = require('express/lib/response');
 const { CLIENT_FOUND_ROWS } = require('mysql/lib/protocol/constants/client');
 const router = express.Router();
 const db = require('../config');
-const moment = require("moment")
+const moment = require("moment");
+const authMiddleware = require("../middlewares/auth-middleware");
+const { time } = require("console");
 moment.tz.setDefault("Asia/Seoul")
 
 
@@ -84,6 +86,7 @@ router.get('/getBooking/',(req,res,)=>{
         if(err) {
             console.log(err);
         }else{
+            // 데이터 값 시간순 정렬
             const datas1  = datas0.sort((a,b) => new moment(a.start).format('x') - new moment(b.start).format('x'))
             res.status(201).send({msg:'success', datas1})
         }
@@ -99,15 +102,100 @@ router.get('/getBooking/',(req,res,)=>{
         }
     })
     }
-    // const sql =`SELECT * FROM TimeTable WHERE Tutor_userName=? ORDER BY Tutor_userName  `
-    // db.query(sql, tutorName,(err,data)=>{
-    //     if(err) {
-    //         console.log(err);
-    //     }else{
-    //         res.status(201).send({msg:'success', data})
-    //     }
-    // })
 })
+
+// 알림용 예약리스트 불러오기 
+router.get('/getNoti', authMiddleware,(req,res)=>{
+    const user = res.locals.user
+    
+    if(user.isTutor === 1){
+        const sql = 'SELECT * FROM TimeTable WHERE Tutor_userName=? ORDER BY createdAt DESC'
+        db.query(sql,user.userName,(err,data)=>{
+            if(err) console.log(err)
+            else{
+                // const data  = data0.sort((a,b) => new moment(a.start).format('x') - new moment(b.start).format('x'))
+                res.status(200).send(data);
+            }
+        })
+    }else if(user.isTutor===0){
+        const sql = 'SELECT * FROM TimeTable WHERE Tutee_userName=? ORDER BY createdAt DESC'
+        db.query(sql,user.userName,(err,data)=>{
+            if(err) console.log(err);
+            else{
+                // const data  = data0.sort((a,b) => new moment(a.start).format('x') - new moment(b.start).format('x'))
+                res.status(200).send(data)
+            }
+        })
+    }
+})
+// 알림용 리스트에서 삭제
+router.patch('/delNoti/',authMiddleware, (req,res)=>{
+    const user = res.locals.user
+    console.log(req.query)
+    const {timeId} =req.query
+    const sql = 'UPDATE TimeTable SET noti = ?  WHERE timeId=? '
+    const answer = [0,parseInt(timeId)]
+    db.query(sql,answer, (err,data)=>{
+        if(err) console.log(err);
+        else{
+            res.status(200).send({msg:'update success!'});
+        }
+    }) 
+})
+
+// 예약 취소하기
+router.patch('/delBooking/', authMiddleware,(req,res)=>{
+    const user = res.locals.user
+    const {timeId} = req.query
+    const sql = 'UPDATE TimeTable SET del = ? WHERE timeId =? '
+    const answer = [1,parseInt(timeId)]
+    db.query(sql, answer, (err,data)=>{
+        if(err) console.log(err);
+        else{
+            res.status(200).send({msg:'success'})
+        }
+    })
+})
+
+// 예약 취소 삭제 확정
+router.delete('/delBookingCheck/', authMiddleware, (req,res)=>{
+    const user = res.locals.user
+    const {timeId} = req.query
+    const sql = 'DELETE FROM TimeTable WHERE timeId=?'
+    db.query(sql, parseInt(timeId), (err,data)=>{
+        if(err) console.log(err);
+        else{
+            res.status(200).send({msg:'Delete complete'})
+        }
+    })
+})
+
+// 알림 전체제거
+router.patch('/delAllNoti',authMiddleware,(req,res)=>{
+    const user = res.locals.user;
+    console.log(req.body)
+    const timeIdArray = req.body;
+    for (let timeId of timeIdArray){
+        const sql = 'UPDATE TimeTable SET noti = ? WHERE timeId=?'
+        const answer = [0,parseInt(timeId)]
+        db.query(sql,answer,(err,data)=>{
+            if(err) console.log(err)
+        })
+    }
+    res.status(200).send({msg:'success'})
+})
+
+
+
+
+
+
+
+
+
+
+
+
 
 //예약리스트 개수 불러오기 
 // router.get('/getBookingCnt',(req,res)=>{
