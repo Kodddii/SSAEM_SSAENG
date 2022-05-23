@@ -140,7 +140,13 @@ io.on('connection', (socket) => {
 		io.to(roomId).emit('user-disconnected', userId);
 		console.log(3.5)
 	});
+	socket.on('send_message', (data) => {
+		console.log(data)
+		socket.to(roomId).emit('receive_message', data);
+		console.log(5)
 	});
+
+});
 	socket.on('send_message', (data) => {
 		console.log(data)
 		socket.to(roomId).emit('receive_message', data);
