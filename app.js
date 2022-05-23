@@ -32,7 +32,7 @@ const https = require("https");
 
 //////////////////////////////////////////////////////////////////
 // https 인증관련
-// const httpPort= 80;
+const httpPort= 80;
 // const httpsPort = 443;
 // const privateKey = fs.readFileSync(__dirname + '/jg-jg_shop.key', 'utf8');
 // const certificate = fs.readFileSync(__dirname + '/jg-jg_shop__crt.pem', 'utf8');
