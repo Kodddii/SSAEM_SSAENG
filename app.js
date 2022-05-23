@@ -134,8 +134,8 @@ io.on('connection', (socket) => {
 	console.log(2.1)
 	io.to(roomId).emit('user-connected', userId);
 	console.log(2.2)
-	socket.on('send_message', ({message,room,author}) => {
-		console.log({message,room,author})
+	socket.on('send_message', (messageData) => {
+		console.log(messageData)
 		socket.to(room).emit('receive_message',author, message);
 		console.log(5)
 	});
