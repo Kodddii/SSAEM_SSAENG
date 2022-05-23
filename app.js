@@ -141,9 +141,9 @@ io.on('connection', (socket) => {
 		console.log(3.5)
 	});
 	});
-	// socket.on('send_message', (data) => {
-	// socket.to(data.room).emit('receive_message', data);
-	// });
+	socket.on('send_message', (data) => {
+	socket.to(data.room).emit('receive_message', data);
+	});
 	// socket.disconnect();
 });
 
