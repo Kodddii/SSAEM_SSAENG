@@ -17,7 +17,7 @@ router.get('/translate', function (req, res) {
       source: "en",
       target: "ko",
       // text: query,
-      text: req.query,
+      text: req.query.text,
     },
     headers: {
       'X-Naver-Client-Id': process.env.NAVER_TRANSLATE_ID,

@@ -22,7 +22,7 @@ module.exports = () => {
         // const param = [profile._json && profile._json.kakao_account.email, profile.displayName, false]
         try {
           const sql1 = 'SELECT * FROM Tutee WHERE userEmail=?'
-          const sql2 = 'SELECT * FROM Tutee WHERE userEmail=?'
+          const sql2 = 'SELECT * FROM Tutor WHERE userEmail=?'
           db.query(sql1, [profile._json && profile._json.kakao_account.email], (err, data) => {
             if (data.length !== 0) {
               console.log(data, 'tutee 회원가입 되어있음!!!')
@@ -33,6 +33,7 @@ module.exports = () => {
                   console.log(data, 'tutor 회원가입 되어있음!!!')
                   done(null, data)
                 } else {
+                  console.log
                   console.log('회원가입 XXXXXXXXX!!!')
                   data = [{
                     userEmail: profile._json && profile._json.kakao_account.email,
