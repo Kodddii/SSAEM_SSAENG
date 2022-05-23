@@ -1,4 +1,4 @@
-name: CI-CD
+name: CI-CD1
 on:
   push:
     branches:
@@ -13,7 +13,7 @@ jobs:
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.REMOTE_IP }}
+          host: ${{ secrets.REMOTE_IP_1 }}
           username: ${{ secrets.REMOTE_SSH_ID }}
           key: ${{ secrets.REMOTE_SSH_KEY }}
           port: ${{ secrets.REMOTE_SSH_PORT }}
