@@ -124,7 +124,27 @@ app.get('/', function (req, res) {
   res.send('메인페이지 입니다!!!')
 })
 
-
+io.on('connection', (socket) => {
+	console.log(1)
+	socket.on('join-room', (roomId, userId) => {
+	let rooms = io.sockets.adapter.rooms;
+	let room = rooms.get(roomId)
+	console.log(2)
+	socket.join(roomId);
+	console.log(2.1)
+	io.to(roomId).emit('user-connected', userId);
+	console.log(2.2)
+  	socket.on('send_message', (data) => {
+	socket.to(data.room).emit('receive_message', data);
+	});
+	socket.on('disconnect', () => {
+		console.log(3)
+		io.to(roomId).emit('user-disconnected', userId);
+		console.log(3.5)
+		  });
+});
+	socket.disconnect();
+});
 
 // io.on("connection", (socket) => {
 // 	console.log(1)
@@ -171,37 +191,46 @@ app.get('/', function (req, res) {
 // 	});
 // })
 
-io.on('connection', (socket) => {
-		console.log(1)
-		socket.on('join-room', (roomId, userId) => {
-		let rooms = io.sockets.adapter.rooms;
-		let room = rooms.get(roomId)
-		console.log(2)
-		if(room == undefined){
-			console.log(2.1)
-			socket.join(roomId)
-			console.log(2.2)
-		}else if(room.size==1){
-			console.log(2.3)
-			socket.join(roomId)
-			console.log(2.4)
-		}else{
-			socket.emit('full')
-		}
-		io.to(roomId).emit('user-connected', userId);
-		console.log(2.2)
-	  	socket.on('disconnect', () => {
-		console.log(3)
-		io.to(roomId).emit('user-disconnected', userId);
-		console.log(3.5)
-	  });
-	});
-		socket.on("send_message", (data) => { 
-			socket.to(data.room).emit("receive_message", data); 
-		});
-		socket.disconnect();
-  });
-//   socket.disconnect();
+// io.on('connection', (socket) => {
+// 		console.log(1)
+// 		socket.on('join-room', (roomId, userId) => {
+// 		let rooms = io.sockets.adapter.rooms;
+// 		let room = rooms.get(roomId)
+// 		console.log(2)
+// 		if(room == undefined){
+// 			console.log(2.1)
+// 			socket.join(roomId)
+// 			io.to(roomId).emit('user-connected', userId);
+// 			console.log(2.2)
+// 		}else if(room.size==1){
+// 			console.log(2.3)
+// 			socket.join(roomId)
+// 			io.to(roomId).emit('user-connected', userId);
+// 			console.log(2.4)
+// 		}else{
+// 			socket.emit('full')
+// 		}
+// 		console.log(2.2)
+
+// 		socket.on("send_message", (data) => { 
+// 			socket.to(data.room).emit("receive_message", data); 
+// 		});
+// 	  	socket.on('disconnect', () => {
+// 		console.log(3)
+// 		io.to(roomId).emit('user-disconnected', userId);
+// 		console.log(3.5)
+// 		});
+// 		socket.disconnect();
+// 	});
+		
+		
+// });
+
+  
+
+
+
+  //   socket.disconnect();
 
 
 
