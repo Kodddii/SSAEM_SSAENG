@@ -134,17 +134,17 @@ io.on('connection', (socket) => {
 	console.log(2.1)
 	io.to(roomId).emit('user-connected', userId);
 	console.log(2.2)
-	socket.on('send_message', (messageData) => {
-		console.log(messageData)
-		socket.to(messageData.room).emit('receive_message',messageData.author, messageData.message);
-		console.log(5)
-	});
+	
 	socket.on('disconnect', () => {
 		console.log(3)
 		io.to(roomId).emit('user-disconnected', userId);
 		console.log(3.5)
 	});	
-	
+	socket.on('send_message', (messageData) => {
+		console.log(messageData)
+		socket.to(messageData.room).emit('receive_message',messageData.author, messageData.message);
+		console.log(5)
+	});
 
 });
 	
