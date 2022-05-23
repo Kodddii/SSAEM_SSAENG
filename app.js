@@ -139,12 +139,12 @@ io.on('connection', (socket) => {
 		console.log(3)
 		io.to(roomId).emit('user-disconnected', userId);
 		console.log(3.5)
-		  });
-});
-	socket.on('send_message', (data) => {
-	socket.to(data.room).emit('receive_message', data);
 	});
-	socket.disconnect();
+	});
+	// socket.on('send_message', (data) => {
+	// socket.to(data.room).emit('receive_message', data);
+	// });
+	// socket.disconnect();
 });
 
 // io.on("connection", (socket) => {
