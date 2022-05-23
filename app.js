@@ -323,7 +323,7 @@ io.on('connection', (socket) => {
 // });
 
 httpServer.listen(httpPort, ()=>{
-	console.log('http서버가 켜졌어요 cicd ddd확인ddd');
+	console.log('http서버가 켜졌어요 로드밸런싱끝내주세요');
 });
 // httpsServer.listen(httpsPort,() =>{
 // 	console.log('https서버가 켜졌어요 ?')
