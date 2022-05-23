@@ -322,7 +322,7 @@ io.on('connection', (socket) => {
 // });
 
 httpServer.listen(httpPort, ()=>{
-	console.log('http서버가 켜졌어요 마지막인사');
+	console.log('http서버가 켜졌어요 cicd 확인');
 });
 httpsServer.listen(httpsPort,() =>{
 	console.log('https서버가 켜졌어요 ?')
