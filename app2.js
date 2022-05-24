@@ -97,6 +97,6 @@ app.get('/', function (req, res) {
 // app.listen(3000, () => {
 //   console.log("3000번 포트에서 대기중!");
 // });
-app.listen(5000, () => {
-  console.log("5000번 포트에서 대기중!");
+app.listen(3000, () => {
+  console.log("3000번 포트에서 대기중!");
 });
