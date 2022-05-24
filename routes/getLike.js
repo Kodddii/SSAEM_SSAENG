@@ -218,21 +218,32 @@ router.get('/getUserDetail/', (req,res)=>{
 // 자신이 좋아요한 선생님 리스트
 router.get('/getLikeList',authMiddleware,(req,res)=>{
     const userName = res.locals.user.userName
-
+    const sql = 'SELECT * FROM `Like` WHERE Tutee_userName=?'
+    db.query(sql,userName,(err,data)=>{
+        if(err){
+            console.log(err)
+            res.status(400).send({msg:'fail'})
+        }else{
+            res.status(200).send({msg:'success', data})
+        }
+    })
 
 
 })
 
 router.get('/isLike/:tutorName', authMiddleware,(req,res)=>{
     const userName = res.locals.user.userName
-    const {tutorName} = req.params.tutorName;
-    const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? AND Tutor_userName=?'
-    const answerData = [userName, tutorName]
+   
+    const {tutorName} = req.params
+    const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? and Tutor_userName=?'
+    const answerData = [ userName, tutorName ]
     db.query(sql0, answerData, (err,data)=>{
+        console.log(data)
         if(err){
             console.log(err)
             res.status(400).send({msg:"fail"})
         }else if (data.length){
+            
             res.status(200).send({isLike:true})
         }else if (!data.length){
             res.status(200).send({isLike:false})
