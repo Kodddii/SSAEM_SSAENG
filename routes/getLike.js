@@ -233,7 +233,6 @@ router.get('/getLikeList',authMiddleware,(req,res)=>{
 
 router.get('/isLike/:tutorName', authMiddleware,(req,res)=>{
     const userName = res.locals.user.userName
-   
     const {tutorName} = req.params
     const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? and Tutor_userName=?'
     const answerData = [ userName, tutorName ]
