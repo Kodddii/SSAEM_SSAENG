@@ -222,10 +222,10 @@ router.post('/login', async (req, res) => {
               if (result) {
                 const userInfo = {
                   isTutor: datas1[0].isTutor,
-                  userName: datas1[0].userName,
+                  userEmail: datas1[0].userEmail,
                 };
                 const token = jwt.sign(
-                                { userName: datas1[0].userName },
+                                { userEmail: datas1[0].userEmail },
                                 process.env.JWT_SECRET,
                             );
                 res.send({ msg: 'success', token, userInfo });
@@ -243,10 +243,10 @@ router.post('/login', async (req, res) => {
             if (result) {
               const userInfo = {
                 isTutor: datas2[0].isTutor,
-                userName: datas2[0].userName,
+                userEmail: datas2[0].userEmail,
               };
               const token = jwt.sign(
-                { userName: datas2[0].userName },
+                { userEmail: datas2[0].userEmail },
                 process.env.JWT_SECRET,
                 );
               res.send({msg: 'success', token, userInfo});
@@ -358,59 +358,102 @@ const { user } = res.locals;
 router.patch('/editUser', async (req, res) => {
   //  const userId = res.locals.userId;
    const { userEmail, userName, pwd, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime } = req.body;
-   if (isTutor) {  //수정하려는 사람이 보내준 값이 isTutor: true일때,
-      const sql = 'SELECT * FROM Tutee WHERE userEmail=?' //Tutee 테이블에서 userEmail로 조회함
-      console.log("튜티테이블에 있는지 조회함")
-      db.query(sql, [userEmail], (err, rows) => {
-      if (rows.length !== 0) {  
-        console.log("튜티데이블에 있다!!!")                          //if Tutee테이블에 있던 유저가 Tutor테이블로 이동하고 싶은거면
+   if (isTutor==="1") {  //수정하려는 사람이 보내준 값이 isTutor: true일때,
+    //   const sql = 'SELECT * FROM Tutee WHERE userEmail=?' //Tutee 테이블에서 userEmail로 조회함
+    //   console.log("튜티테이블에 있는지 조회함")
+    //   db.query(sql, [userEmail], (err, rows) => {
+    //   if (rows.length !== 0) {  
+    //     console.log("튜티데이블에 있다!!!")                          //if Tutee테이블에 있던 유저가 Tutor테이블로 이동하고 싶은거면
 
-      const sql3 = 'DELETE FROM Tutee WHERE userEmail=?'
-      db.query(sql3, [userEmail], (err, rows) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log('튜티테이블에서 삭제됨');
-          res.status(200).send({msg: 'successfully deleted from Tutee!'});
-        }
-      });
-      const sql2 = 'INSERT INTO Tutor (`userEmail`,`userName`,`pwd`,`isTutor`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
-      db.query(sql2, [userEmail, userName, pwd, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime], (err, row) => {
-        if (err) {
-          console.log(err)
-        } else {
-           console.log("윤하짱짱")
-        res.status(200).send({msg: 'success'})
-        }
-     })                                                    //Tutor 테이블로 Insert해줌
-    console.log("선생님테이블에 저장하라고")
+    //   const sql3 = 'DELETE FROM Tutee WHERE userEmail=?'
+    //   db.query(sql3, [userEmail], (err, rows) => {
+    //     if (err) {
+    //       console.log(err);
+    //     } else {
+    //       console.log('튜티테이블에서 삭제됨');
+    //       res.status(200).send({msg: 'successfully deleted from Tutee!'});
+    //     }
+    //   });
+    //   const sql2 = 'INSERT INTO Tutor (`userEmail`,`userName`,`pwd`,`isTutor`,`tag`,`language1`,`language2`,`language3`,`comment`,`contents`,`startTime`,`endTime`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
+    //   db.query(sql2, [userEmail, userName, pwd, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime], (err, row) => {
+    //     if (err) {
+    //       console.log(err)
+    //     } else {
+    //        console.log("윤하짱짱")
+    //     res.status(200).send({msg: 'success'})
+    //     }
+    //  })                                                    //Tutor 테이블로 Insert해줌
+    // console.log("선생님테이블에 저장하라고")
                                                       
-  } else {                                              //else Tutor 테이블에 이미 있는 유저가 추가정보만 수정하고 싶은거면
+  // } else {                                              //else Tutor 테이블에 이미 있는 유저가 추가정보만 수정하고 싶은거면
     const sql1 =
       'UPDATE Tutor SET userName=?, isTutor=?, pwd=?, tag=?, language1=?, language2=?, language3=?, comment=?, contents=?, startTime=?, endTime=? WHERE userEmail=?'
                                                           //Tutor 테이블에서 추가정보만 업데이트해준다
-    db.query(sql1, [userName, isTutor, pwd, tag, language1, language2, language3, comment, contents, startTime, endTime, userEmail], (err, row) => {
+    const datas1 = [
+      userName,
+      isTutor,
+      pwd,
+      tag,
+      language1,
+      language2,
+      language3,
+      comment,
+      contents,
+      startTime,
+      endTime,
+      userEmail
+    ];
+    console.log(2222222222222222222222222)
+    bcrypt.hash(datas1[2], saltRounds, (err, hash) => {
+    if (err){
+      console.log(err)
+    } else {
+       datas1[2] = hash;
+    }
+    db.query(sql1, datas1, (err, row) => {
       if (err) {
         console.log(err);
       } else {
-        res.status(200).send({msg: 'success'});
+        res.status(200).send({msg: '유저정보 수정 성공!'});
       }
     }); 
-  }
- })
- } else {    //else 수정하려는 사람이 보내준 값이 isTutor: false일때,(Tutee로 수정하고싶은 사람은 무조건 Tutee여야 함.)
+  })
+} else {    //else 수정하려는 사람이 보내준 값이 isTutor: false일때,(Tutee로 수정하고싶은 사람은 무조건 Tutee여야 함.)
     const sql2 =
-      'UPDATE Tutee SET userName=?, isTutor=?, tag=?, language1=?, language2=?, language3=?, comment=?, contents=?, startTime=?, endTime=? WHERE userEmail=?'
+      'UPDATE Tutee SET userName=?, isTutor=?, pwd=?, tag=?, language1=?, language2=?, language3=?, comment=?, contents=?, startTime=?, endTime=? WHERE userEmail=?'
                                                       //Tutee테이블에서 추가정보를 업데이트해준다
-    db.query(sql2, [userName, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime, userEmail], (err, row) => {
+    const datas1 = [
+      userName,
+      isTutor,
+      pwd,
+      tag,
+      language1,
+      language2,
+      language3,
+      comment,
+      contents,
+      startTime,
+      endTime,
+      userEmail
+    ];
+    console.log(2222222222222222222222222)
+    bcrypt.hash(datas1[2], saltRounds, (err, hash) => {
+    if (err){
+      console.log(err)
+    } else {
+       datas1[2] = hash;
+    }
+    db.query(sql2, datas1, (err, row) => {
       if (err) {
         console.log(err);
       } else {
-        res.status(200).send({msg: 'success'});
+        res.status(200).send({msg: '유저정보 수정 성공!'});
       }
-    });
-   }
- })
+    }); 
+  })
+}
+})
+
 
  //유저 프로필사진 업로드
  router.post(
@@ -445,17 +488,3 @@ router.patch('/editUser', async (req, res) => {
          
 
 module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

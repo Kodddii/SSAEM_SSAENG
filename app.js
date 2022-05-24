@@ -13,7 +13,6 @@ const peer = require("peer");
 const helmet = require("helmet");
 const {Server} = require("socket.io");
 
-const app_low = express();
 const app = express();
 
 
@@ -34,15 +33,15 @@ const https = require("https");
 //////////////////////////////////////////////////////////////////
 // https 인증관련
 const httpPort= 80;
-const httpsPort = 443;
-const privateKey = fs.readFileSync(__dirname + '/jg-jg_shop.key', 'utf8');
-const certificate = fs.readFileSync(__dirname + '/jg-jg_shop__crt.pem', 'utf8');
-const ca = fs.readFileSync(__dirname + '/jg-jg_shop__ca.pem', 'utf8');
-const credentials = {
-  key: privateKey,
-  cert: certificate,
-  ca: ca,
-};
+// const httpsPort = 443;
+// const privateKey = fs.readFileSync(__dirname + '/jg-jg_shop.key', 'utf8');
+// const certificate = fs.readFileSync(__dirname + '/jg-jg_shop__crt.pem', 'utf8');
+// const ca = fs.readFileSync(__dirname + '/jg-jg_shop__ca.pem', 'utf8');
+// const credentials = {
+//   key: privateKey,
+//   cert: certificate,
+//   ca: ca,
+// };
 
 
 
@@ -55,11 +54,11 @@ const credentials = {
 //   ca: ca,
 // };
 
-const httpServer = http.createServer(app_low);
-const httpsServer = https.createServer(credentials,app);
+const httpServer = http.createServer(app);
+// const httpsServer = https.createServer(credentials,app);
 
 // socket.io https 서버
-const io = new Server(httpsServer, {
+const io = new Server(httpServer, {
 	cors: {
 		origin: "*",
 		methods: [ "GET", "POST" ]
@@ -72,7 +71,7 @@ const io = new Server(httpsServer, {
 //   console.log("Request URL:", req.originalUrl, "-", new Date());
 //   next();
 // };
-
+app.get("/abc", (req, res) => { res.status(200).json({ msg: "good" }); });
 //미들웨어
 app.use(cors());
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -103,27 +102,27 @@ app.use(requestMiddleware)
 
 
 // https 인증관련
-app.get('/.well-known/pki-validation/69DCB230704B206B1161AA5BC7E57864.txt', (req,res)=>{
-	res.sendFile(__dirname + '/well-known/pki-validation/69DCB230704B206B1161AA5BC7E57864.txt')
-  });
-app_low.use((req,res,next)=>{
-	if(req.secure){
-	  next();
-	}else{
-	  const to = `https://${req.hostname}:${httpsPort}${req.url}`;
-	  console.log(to);
-	  res.redirect(to)
-	}
-  })
-//라우터 연결
+// app.get('/.well-known/pki-validation/69DCB230704B206B1161AA5BC7E57864.txt', (req,res)=>{
+// 	res.sendFile(__dirname + '/well-known/pki-validation/69DCB230704B206B1161AA5BC7E57864.txt')
+//   });
+// app_low.use((req,res,next)=>{
+// 	if(req.secure){
+// 	  next();
+// 	}else{
+// 	  const to = `https://${req.hostname}:${httpsPort}${req.url}`;
+// 	  console.log(to);
+// 	  res.redirect(to)
+// 	}
+//   })
+// //라우터 연결
 app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRouter, translateRouter);
 
 // app.use(express.static("assets"));
 
 
-app.get('/', function (req, res) {
-  res.send('메인페이지 입니다!!!')
-})
+// app.get('/', function (req, res) {
+//   res.send('메인페이지 입니다!!!')
+// })
 
 io.on('connection', (socket) => {
 	console.log(1)
@@ -135,16 +134,21 @@ io.on('connection', (socket) => {
 	console.log(2.1)
 	io.to(roomId).emit('user-connected', userId);
 	console.log(2.2)
-  	socket.on('send_message', (data) => {
-	socket.to(data.room).emit('receive_message', data);
-	});
+	
 	socket.on('disconnect', () => {
 		console.log(3)
 		io.to(roomId).emit('user-disconnected', userId);
 		console.log(3.5)
-		  });
+	});	
+	
+
 });
-	socket.disconnect();
+	socket.on('send_message', (Data) => {
+		console.log(Data)
+		socket.to(Data.room).emit('receive_message',({autor:Data.author, message:Data.message}));
+		console.log(5)
+	});
+	// socket.disconnect();
 });
 
 // io.on("connection", (socket) => {
@@ -323,8 +327,8 @@ io.on('connection', (socket) => {
 // });
 
 httpServer.listen(httpPort, ()=>{
-	console.log('http서버가 켜졌어요 cicd ddd확인ddd');
+	console.log('http서버가 켜졌어요 로드밸런싱끝내주세요');
 });
-httpsServer.listen(httpsPort,() =>{
-	console.log('https서버가 켜졌어요 ?')
-});
+// httpsServer.listen(httpsPort,() =>{
+// 	console.log('https서버가 켜졌어요 ?')
+// });
