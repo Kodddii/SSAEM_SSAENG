@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-// const query = "nice to meet you";
+const query = "nice to meet you";
 
 // router.post('/translate', (req, res) => {
 //   console.log('translate')
@@ -16,8 +16,8 @@ router.get('/translate', function (req, res) {
     form: {
       source: "en",
       target: "ko",
-      // text: query,
-      text: req.query.text,
+      text: query,
+      // text: req.query.text,
     },
     headers: {
       'X-Naver-Client-Id': process.env.NAVER_TRANSLATE_ID,
