@@ -31,17 +31,20 @@ router.get(
     // });
     db.query(sql1, [userEmail], (err, data) => {
       if (data.length !== 0) {
-        res.send(token)
+        res.redirect('/kakaoUser?token='+token)
+        // res.send(token)
       } else {
         db.query(sql2, [userEmail], (err, data) => {
           if (data.length !== 0) {
-            res.send(token)
+            res.redirect('/kakaoUser?token='+token)
+            // res.send(token)
           } else {
             console.log('회원가입 XXXXXXXXX!!!')
-            res.send({
-              userEmail,
-              userName,
-            })
+            res.redirect('/kakaoUser?userEmail='+userEmail+'&userName='+userName)
+            // res.send({
+            //   userEmail,
+            //   userName,
+            // })
           }
         })
       }
@@ -64,17 +67,20 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
     console.log(userEmail, userName, token)
     db.query(sql1, [userEmail], (err, data) => {
       if (data.length !== 0) {
-        res.send(token)
+        // res.send(token)
+        res.redirect('/googleUser?token='+token)
       } else {
         db.query(sql2, [userEmail], (err, data) => {
           if (data.length !== 0) {
-            res.send(token)
+            res.redirect('/googleUser?token='+token)
+            // res.send(token)
           } else {
             console.log('회원가입 XXXXXXXXX!!!')
-            res.send({
-              userEmail,
-              userName,
-            })
+            res.redirect('/googleUser?userEmail='+userEmail+'&userName='+userName)
+            // res.send({
+            //   userEmail,
+            //   userName,
+            // })
           }
         })
       }
