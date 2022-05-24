@@ -223,7 +223,7 @@ router.get('/getLikeList',authMiddleware,(req,res)=>{
 
 })
 
-router.get('/isLike', authMiddleware,(req,res)=>{
+router.get('/isLike/:tutorName', authMiddleware,(req,res)=>{
     const userName = res.locals.user.userName
     const {tutorName} = req.params.tutorName;
     const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? AND Tutor_userName=?'
