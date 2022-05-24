@@ -357,7 +357,6 @@ const { user } = res.locals;
 // 유저정보 수정
 router.patch('/editUser', async (req, res) => {
   //  const userId = res.locals.userId;
-  console.log(req.body)
    const { userEmail, userName, pwd, isTutor, tag, language1, language2, language3, comment, contents, startTime, endTime } = req.body;
    if (isTutor==="1") {  //수정하려는 사람이 보내준 값이 isTutor: true일때,
     //   const sql = 'SELECT * FROM Tutee WHERE userEmail=?' //Tutee 테이블에서 userEmail로 조회함
