@@ -232,9 +232,9 @@ router.get('/isLike/:tutorName', authMiddleware,(req,res)=>{
         if(err){
             console.log(err)
         }else if (data.length){
-            res.send({isLike:false})
-        }else if (!data.length){
             res.send({isLike:true})
+        }else if (!data.length){
+            res.send({isLike:false})
         }
     })
 })
