@@ -133,28 +133,62 @@ router.patch('/delNoti/',authMiddleware, (req,res)=>{
     const user = res.locals.user
     console.log(req.query)
     const {timeId} =req.query
-    const sql = 'UPDATE TimeTable SET noti = ?  WHERE timeId=? '
-    const answer = [0,parseInt(timeId)]
-    db.query(sql,answer, (err,data)=>{
-        if(err) console.log(err);
-        else{
-            res.status(200).send({msg:'update success!'});
-        }
-    }) 
+    if(user.isTutor===1){
+        const sql = 'UPDATE TimeTable SET TutorNoti = ?  WHERE timeId=? '
+        const answer = [0,parseInt(timeId)]
+        db.query(sql,answer, (err,data)=>{
+            if(err) {
+                console.log(err);
+                res.status(400).send({msg:'update failed'})
+            }
+            else{
+                res.status(200).send({msg:'update success!'});
+            }
+        }) 
+    }else if(user.isTutor===0){
+        const sql = 'UPDATE TimeTable SET TuteeNoti = ?  WHERE timeId=? '
+        const answer = [0,parseInt(timeId)]
+        db.query(sql,answer, (err,data)=>{
+            if(err) {
+                console.log(err);
+                res.status(400).send({msg:'update fail'})
+            }
+            else{
+                res.status(200).send({msg:'update success!'});
+            }
+        }) 
+    }
 })
 
 // 예약 취소하기
 router.patch('/delBooking/', authMiddleware,(req,res)=>{
     const user = res.locals.user
     const {timeId} = req.query
-    const sql = 'UPDATE TimeTable SET del = ? WHERE timeId =? '
-    const answer = [1,parseInt(timeId)]
-    db.query(sql, answer, (err,data)=>{
-        if(err) console.log(err);
-        else{
-            res.status(200).send({msg:'success'})
-        }
-    })
+    if(user.isTutor===1){
+        const sql = 'UPDATE TimeTable SET TutorDel = ? WHERE timeId =? '
+        const answer = [1,parseInt(timeId)]
+        db.query(sql, answer, (err,data)=>{
+            if(err){
+                console.log(err);
+                res.status(400).send({msg:'fail'})
+            } 
+            else{
+                res.status(200).send({msg:'success'})
+            }
+        })
+    }else if(user.isTutor===0){
+        const sql = 'UPDATE TimeTable SET TuteeDel = ? WHERE timeId =? '
+        const answer = [1,parseInt(timeId)]
+        db.query(sql, answer, (err,data)=>{
+            if(err){
+                console.log(err);
+                res.status(400).send({msg:'fail'})
+            } 
+            else{
+                res.status(200).send({msg:'success'})
+            }
+        })
+    }
 })
 
 // 예약 취소 삭제 확정
