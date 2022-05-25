@@ -9,8 +9,10 @@ router.patch('/like',authMiddleware,(req,res)=>{
     const userName = res.locals.user.userName
     console.log(req.body)
     const {tutorName} = req.body;
-    if(userName===tutorName) res.status(400).send({msg:'fail'}) 
-    return;
+    if(userName===tutorName) {
+        res.status(400).send({msg:'fail'})
+        return;
+    }
     const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? AND Tutor_userName=?'
     const sql1 =  'UPDATE Tutor SET `like` = `like` + 1 WHERE userName=?'
     const answerData = [userName, tutorName]

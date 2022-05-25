@@ -517,7 +517,7 @@ router.post('/mail', async (req, res) => {
     let mailOptions = await transporter.sendMail({
         from: process.env.nodemailerUser,
         to: userEmail,
-        subject: '[Nbbang] 회원가입을 위한 인증번호를 입력해주세요.',
+        subject: '[Friengls] 회원가입을 위한 인증번호를 입력해주세요.',
         html: emailTemplete,
     });
 
