@@ -23,7 +23,7 @@ router.get(
     console.log("req 정보!!!!!!!!!!!!", req.user)
     const userEmail = req.user[0].userEmail
     const userName = req.user[0].userName
-    const token = jwt.sign({ userName }, process.env.JWT_SECRET)
+    const token = jwt.sign({ userEmail }, process.env.JWT_SECRET)
     console.log(userEmail, userName, token)
     // res.send({
     //   userEmail,
@@ -63,7 +63,7 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
     console.log("req 정보!!!!!!!!!!!!", req.user)
     const userEmail = req.user[0].userEmail
     const userName = req.user[0].userName
-    const token = jwt.sign({ userName }, process.env.JWT_SECRET)
+    const token = jwt.sign({ userEmail }, process.env.JWT_SECRET)
     console.log(userEmail, userName, token)
     db.query(sql1, [userEmail], (err, data) => {
       if (data.length !== 0) {
