@@ -109,8 +109,8 @@ router.get('/getNoti', authMiddleware,(req,res)=>{
     const user = res.locals.user
     
     if(user.isTutor === 1){
-        const sql = 'SELECT * FROM TimeTable WHERE Tutor_userName=? ORDER BY createdAt DESC'
-        db.query(sql,user.userName,(err,data)=>{
+        const sql = 'SELECT * FROM TimeTable WHERE Tutor_userName=? AND (WHERE TutorNoti = ? OR WHERE TutorDel=?) ORDER BY createdAt DESC'
+        db.query(sql,[user.userName,1],(err,data)=>{
             if(err) console.log(err)
             else{
                 // const data  = data0.sort((a,b) => new moment(a.start).format('x') - new moment(b.start).format('x'))
@@ -118,8 +118,8 @@ router.get('/getNoti', authMiddleware,(req,res)=>{
             }
         })
     }else if(user.isTutor===0){
-        const sql = 'SELECT * FROM TimeTable WHERE Tutee_userName=? ORDER BY createdAt DESC'
-        db.query(sql,user.userName,(err,data)=>{
+        const sql = 'SELECT * FROM TimeTable WHERE Tutee_userName=? AND (WHERE TutorNoti = ? OR WHERE TutorDel=?) ORDER BY createdAt DESC'
+        db.query(sql,[user.userName,1],(err,data)=>{
             if(err) console.log(err);
             else{
                 // const data  = data0.sort((a,b) => new moment(a.start).format('x') - new moment(b.start).format('x'))
