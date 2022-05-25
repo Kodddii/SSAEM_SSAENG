@@ -8,7 +8,10 @@ const db = require('../config.js');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const upload = require('../modules/multer');
-
+const ejs = require('ejs')
+const nodemailer = require('nodemailer')
+const path = require('path')
+// let appDir = path.dirname(require.main.filename);
 
 // 이미지 파일 AWS S3 저장
 router.post('/single', upload.single('userProfile'), async (req, res) => {
@@ -487,12 +490,12 @@ router.post(
 
 
 router.post('/mail', async (req, res) => {
+    console.log(req.body)
     const userEmail = req.body.userEmail;
     let authNum = Math.random().toString().substr(2, 6);
     let emailTemplete;
 
-    ejs.renderFile(
-        appDir + '/template/authMail.ejs',
+    ejs.renderFile(__dirname + '/../template/authMail.ejs',
         { authCode: authNum },
         function (err, data) {
             if (err) {
@@ -521,42 +524,51 @@ router.post('/mail', async (req, res) => {
         html: emailTemplete,
     });
 
+     transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+          console.log(error);
+      }
+      console.log("Finish sending email : " + info.response);
+      res.send(authNum);
+      transporter.close()
+  });
+
     // authNum 저장
-    db.query(
-        'SELECT *, TIMESTAMPDIFF(minute, updatedAt, now()) timeDiff FROM AuthNum WHERE userEmail=?',
-        userEmail,
-        (err, data) => { 
-            // const authNum = user[0].authNum
+    // db.query(
+    //     'SELECT *, TIMESTAMPDIFF(minute, updatedAt, now()) timeDiff FROM AuthNum WHERE userEmail=?',
+    //     userEmail,
+    //     (err, data) => { 
+    //         // const authNum = user[0].authNum
 
-            if (data.length === 0 ) {
-                db.query(
-                    'INSERT AuthNum(`authNum`, `userEmail`,`count`) VALUES (?,?,?)',
-                    [authNum, userEmail, 1],
-                    (err, data) => {
-                        res.send({ msg: 'success' });
-                    },
-                );
-            } else if ( data[0].timeDiff > 5) {
-                db.query(
-                    'UPDATE AuthNum SET authNum=?, `updatedAt`=now(), `count`=1 WHERE userEmail=?',
-                    [authNum, userEmail],
-                    (err, data) => {
-                        res.send({ msg: 'success' });
-                    },
-                );
+    //         if (data.length === 0 ) {
+    //             db.query(
+    //                 'INSERT AuthNum(`authNum`, `userEmail`,`count`) VALUES (?,?,?)',
+    //                 [authNum, userEmail, 1],
+    //                 (err, data) => {
+    //                     res.send({ msg: 'success' });
+    //                 },
+    //             );
+    //         } else if ( data[0].timeDiff > 5) {
+    //             db.query(
+    //                 'UPDATE AuthNum SET authNum=?, `updatedAt`=now(), `count`=1 WHERE userEmail=?',
+    //                 [authNum, userEmail],
+    //                 (err, data) => {
+    //                     res.send({ msg: 'success' });
+    //                 },
+    //             );
 
-            } else if (data[0].count < 3 && data[0].timeDiff <= 5) {
-                db.query(
-                    'UPDATE AuthNum SET authNum=?, `count`=count+1 WHERE userEmail=?',
-                    [authNum, userEmail],
-                    (err, data) => {
-                        res.send({ msg: 'success' });
-                    },
-                );
-            } else if (data[0].count === 3 && data[0].timeDiff <= 5) {
-                res.send({ msg: 'fail' });
-            }   
-    });
+    //         } else if (data[0].count < 3 && data[0].timeDiff <= 5) {
+    //             db.query(
+    //                 'UPDATE AuthNum SET authNum=?, `count`=count+1 WHERE userEmail=?',
+    //                 [authNum, userEmail],
+    //                 (err, data) => {
+    //                     res.send({ msg: 'success' });
+    //                 },
+    //             );
+    //         } else if (data[0].count === 3 && data[0].timeDiff <= 5) {
+    //             res.send({ msg: 'fail' });
+    //         }   
+    // });
 });
 
 
