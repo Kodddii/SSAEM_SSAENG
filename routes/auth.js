@@ -1,10 +1,13 @@
 const express = require('express');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
+const cors = require("cors");
 const { Cookie } = require('express-session');
 const jwt = require('jsonwebtoken');
 const db = require('../config')
 const router = express.Router();
+
+router.use(cors());
 
 //* 카카오로 로그인하기 라우터 ***********************
 //? /kakao로 요청오면, 카카오 로그인 페이지로 가게 되고, 카카오 서버를 통해 카카오 로그인을 하게 되면, 다음 라우터로 요청한다.

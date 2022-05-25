@@ -31,7 +31,7 @@ router.get('/getReview/:tutor_userName', async (req, res) => {
     } else {
       const sql2 = "SELECT `userProfile` FROM Tutor WHERE userName=?"
       const sql3 = "SELECT `userProfile` FROM Tutee WHERE userName=?"
-      db.query(sql2, [tutor_userName], (err, data1) => {
+      db.query(sql2, [tutor_userName], (err, tutor_userProfile) => {
         if (err) {
           console.log(err);
           res.send({ msg: 'tutor_userProfile fail'})
