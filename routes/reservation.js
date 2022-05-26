@@ -109,7 +109,7 @@ router.get('/getNoti', authMiddleware,(req,res)=>{
     const user = res.locals.user
     
     if(user.isTutor === 1){
-        const sql = 'SELECT * FROM TimeTable WHERE Tutor_userName=? AND  (TutorNoti = ? OR TutorDel=?) ORDER BY createdAt DESC'
+        const sql = 'SELECT * FROM TimeTable WHERE Tutor_userName=? AND (TutorNoti = ? OR TuteeDel=?) ORDER BY createdAt DESC'
         db.query(sql,[user.userName,1,1],(err,data)=>{
             if(err) console.log(err)
             else{
@@ -118,7 +118,7 @@ router.get('/getNoti', authMiddleware,(req,res)=>{
             }
         })
     }else if(user.isTutor===0){
-        const sql = 'SELECT * FROM TimeTable WHERE Tutee_userName=? AND ( TuteeNoti = ? OR  TuteeDel=?) ORDER BY createdAt DESC'
+        const sql = 'SELECT * FROM TimeTable WHERE Tutee_userName=? AND ( TuteeNoti = ? OR  TutorDel=?) ORDER BY createdAt DESC'
         db.query(sql,[user.userName,1,1],(err,data)=>{
             if(err) console.log(err);
             else{
