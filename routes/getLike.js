@@ -3,6 +3,7 @@ const authMiddleware = require('../middlewares/auth-middleware')
 const router = express.Router();
 const db = require('../config');
 const res = require('express/lib/response');
+const { query } = require('../config');
 
 // Like
 router.patch('/like',authMiddleware,(req,res)=>{
@@ -219,20 +220,31 @@ router.get('/getUserDetail/', (req,res)=>{
         })
     }
 })
-// 자신이 좋아요한 선생님 리스트
+// 좋아요한 선생님리스트, 자신을 좋아요한 학생리스트
 router.get('/getLikeList',authMiddleware,(req,res)=>{
-    const userName = res.locals.user.userName
-    const sql = 'SELECT * FROM `Like` WHERE Tutee_userName=?'
-    db.query(sql,userName,(err,data)=>{
-        if(err){
-            console.log(err)
-            res.status(400).send({msg:'fail'})
-        }else{
-            res.status(200).send({msg:'success', data})
-        }
-    })
-
-
+    const user = res.locals.user
+    if(user.isTutor===1){
+     
+        const sql = 'SELECT T.userName, T.userProfile FROM `Tutee` T LEFT OUTER JOIN `Like` L ON  T.userName = L.Tutee_userName WHERE L.Tutor_userName=?;'
+        db.query(sql,user.userName,(err,data)=>{
+            if(err){
+                console.log(err)
+                res.status(400).send({msg:'fail'})
+            }else{
+                res.status(200).send(data)
+            }
+        })    
+    }else if(user.isTutor===0){
+        const sql = 'SELECT T.userName, T.userProfile FROM `Tutor` T LEFT OUTER JOIN `Like` L ON  T.userName = L.Tutor_userName WHERE L.Tutee_userName=?';
+        db.query(sql,user.userName,(err,data)=>{
+            if(err){
+                console.log(err)
+                res.status(400).send({msg:'fail'})
+            }else{
+                res.status(200).send(data)
+            }
+        }) 
+    }
 })
 
 router.get('/isLike/:tutorName', authMiddleware,(req,res)=>{
