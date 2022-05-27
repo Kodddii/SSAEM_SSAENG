@@ -7,14 +7,15 @@ const middleware = require('../middlewares/auth-middleware')
 
 // 리뷰 전체 불러오기(메인화면)
 router.get('/getReview', async (req, res) => {
-  const sql = "SELECT * FROM Review ORDER BY Tutor_userName"
+  const sql = "SELECT R.*, TU.userProfile AS Tutee_userProfile, TT.userProfile AS Tutor_userProfile FROM `Review` R LEFT OUTER JOIN `Tutee` TU ON R.Tutee_userName = TU.userName LEFT OUTER JOIN `Tutor` TT ON R.Tutor_userName = TT.userName"
   db.query(sql, (err, data) => {
     if (err) {
       console.log(err);
       res.send({ msg: 'fail' });
     } else {
-      // console.log(data);
       count = data.length
+      console.table(data)
+      console.log(count)
       res.send({ data, count });
     }
   })
@@ -22,46 +23,19 @@ router.get('/getReview', async (req, res) => {
 // 리뷰 불러오기(조회)
 router.get('/getReview/:tutor_userName', async (req, res) => {
   const { tutor_userName } = req.params;
-  console.log(req.params);
-  const sql1 = "SELECT * FROM Review WHERE tutor_userName=? ORDER BY createdAt DESC"
-  db.query(sql1, [tutor_userName], (err, data) => {
+  console.log(tutor_userName);
+  const sql = "SELECT R.*, TU.userProfile AS Tutee_userProfile, TT.userProfile AS Tutor_userProfile FROM `Review` R LEFT OUTER JOIN `Tutee` TU ON R.Tutee_userName = TU.userName LEFT OUTER JOIN `Tutor` TT ON R.Tutor_userName = TT.userName WHERE Tutor_userName=?"
+  db.query(sql, tutor_userName, (err, data) => {
     if (err) {
-      console.log(err);
+      console.log(err)
       res.send({ msg: 'fail' })
     } else {
-      const sql2 = "SELECT `userProfile` FROM Tutor WHERE userName=?"
-      const sql3 = "SELECT `userProfile` FROM Tutee WHERE userName=?"
-      db.query(sql2, [tutor_userName], (err, data1) => {
-        if (err) {
-          console.log(err);
-          res.send({ msg: 'tutor_userProfile fail'})
-        } else {
-          // console.log(data1)
-        }
-      })
-      for (i=0;i<data.length;i++) {
-        const tutee_userName = data[i].Tutee_userName
-        console.log(tutee_userName)
-        var arr = [];
-        db.query(sql3, [tutee_userName], (err, tutee_userProfile) => {
-          if (err) {
-            console.log(err);
-            res.send({ msg: 'tutee_userProfile fail'})
-          } else {
-            // console.log(tutee_userProfile)
-            tutee_userProfile[i]
-            // console.log(arr)
-          }
-        })
-        // console.log(arr)    
-        // arr.push(tutee_userName)
-      }
-      // console.log(arr)
-      // console.log(data, tutee_userName, tutor_userName)     
-      res.send({ data });
-      // console.log(data)
+      count = data.length
+      console.table(data)
+      console.log(count)
+      res.send(data)
     }
-  });
+  })
 });
 
 // 리뷰 작성

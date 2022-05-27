@@ -3,12 +3,17 @@ const authMiddleware = require('../middlewares/auth-middleware')
 const router = express.Router();
 const db = require('../config');
 const res = require('express/lib/response');
+const { query } = require('../config');
 
 // Like
 router.patch('/like',authMiddleware,(req,res)=>{
     const userName = res.locals.user.userName
     console.log(req.body)
     const {tutorName} = req.body;
+    if(userName===tutorName) {
+        res.status(400).send({msg:'fail'})
+        return;
+    }
     const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? AND Tutor_userName=?'
     const sql1 =  'UPDATE Tutor SET `like` = `like` + 1 WHERE userName=?'
     const answerData = [userName, tutorName]
@@ -215,26 +220,48 @@ router.get('/getUserDetail/', (req,res)=>{
         })
     }
 })
-// 자신이 좋아요한 선생님 리스트
+// 좋아요한 선생님리스트, 자신을 좋아요한 학생리스트
 router.get('/getLikeList',authMiddleware,(req,res)=>{
-    const userName = res.locals.user.userName
-
-
-
+    const user = res.locals.user
+    if(user.isTutor===1){
+     
+        const sql = 'SELECT T.userName, T.userProfile FROM `Tutee` T LEFT OUTER JOIN `Like` L ON  T.userName = L.Tutee_userName WHERE L.Tutor_userName=?;'
+        db.query(sql,user.userName,(err,data)=>{
+            if(err){
+                console.log(err)
+                res.status(400).send({msg:'fail'})
+            }else{
+                res.status(200).send(data)
+            }
+        })    
+    }else if(user.isTutor===0){
+        const sql = 'SELECT T.userName, T.userProfile FROM `Tutor` T LEFT OUTER JOIN `Like` L ON  T.userName = L.Tutor_userName WHERE L.Tutee_userName=?';
+        db.query(sql,user.userName,(err,data)=>{
+            if(err){
+                console.log(err)
+                res.status(400).send({msg:'fail'})
+            }else{
+                res.status(200).send(data)
+            }
+        }) 
+    }
 })
 
-router.get('/isLike', authMiddleware,(req,res)=>{
+router.get('/isLike/:tutorName', authMiddleware,(req,res)=>{
     const userName = res.locals.user.userName
-    const {tutorName} = req.params.tutorName;
-    const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? AND Tutor_userName=?'
-    const answerData = [userName, tutorName]
+    const {tutorName} = req.params
+    const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? and Tutor_userName=?'
+    const answerData = [ userName, tutorName ]
     db.query(sql0, answerData, (err,data)=>{
+        console.log(data)
         if(err){
             console.log(err)
+            res.status(400).send({msg:"fail"})
         }else if (data.length){
-            res.send({isLike:false})
+            
+            res.status(200).send({isLike:true})
         }else if (!data.length){
-            res.send({isLike:true})
+            res.status(200).send({isLike:false})
         }
     })
 })

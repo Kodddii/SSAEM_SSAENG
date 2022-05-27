@@ -8,7 +8,10 @@ const db = require('../config.js');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const upload = require('../modules/multer');
-
+const ejs = require('ejs')
+const nodemailer = require('nodemailer')
+const path = require('path')
+// let appDir = path.dirname(require.main.filename);
 
 // 이미지 파일 AWS S3 저장
 router.post('/single', upload.single('userProfile'), async (req, res) => {
@@ -417,7 +420,7 @@ router.patch('/editUser', async (req, res) => {
       }
     }); 
   })
-} else {    //else 수정하려는 사람이 보내준 값이 isTutor: false일때,(Tutee로 수정하고싶은 사람은 무조건 Tutee여야 함.)
+  } else {    //else 수정하려는 사람이 보내준 값이 isTutor: false일때,(Tutee로 수정하고싶은 사람은 무조건 Tutee여야 함.)
     const sql2 =
       'UPDATE Tutee SET userName=?, isTutor=?, pwd=?, tag=?, language1=?, language2=?, language3=?, comment=?, contents=?, startTime=?, endTime=? WHERE userEmail=?'
                                                       //Tutee테이블에서 추가정보를 업데이트해준다
@@ -449,12 +452,12 @@ router.patch('/editUser', async (req, res) => {
       }
     }); 
   })
-}
+ }
 })
 
 
- //유저 프로필사진 수정
- router.post(
+ //유저 프로필사진 업로드
+router.post(
      '/editUser/profile',
      upload.single('userProfile'),
      async (req, res) => {
@@ -481,7 +484,93 @@ router.patch('/editUser', async (req, res) => {
               }
            })
          }
-         })
+  })
+
+
+router.post('/mail', async (req, res) => {
+    console.log(req.body)
+    const userEmail = req.body.userEmail;
+    let authNum = Math.random().toString().substr(2, 6);
+    let emailTemplete;
+
+    ejs.renderFile(__dirname + '/../template/authMail.ejs',
+        { authCode: authNum },
+        function (err, data) {
+            if (err) {
+                console.log(err);
+            }
+            emailTemplete = data;
+        },
+    );
+
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.nodemailerUser,
+            pass: process.env.nodemailerPw,
+        },
+    });
+
+    //메일 제목 설정
+    let mailOptions = await transporter.sendMail({
+        from: process.env.nodemailerUser,
+        to: userEmail,
+        subject: '[Friengls] 회원가입을 위한 인증번호를 입력해주세요.',
+        html: emailTemplete,
+    });
+
+     transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+          console.log(error);
+      }
+      console.log("Finish sending email : " + info.response);
+      res.send(authNum);
+      transporter.close()
+  });
+
+    // authNum 저장
+    // db.query(
+    //     'SELECT *, TIMESTAMPDIFF(minute, updatedAt, now()) timeDiff FROM AuthNum WHERE userEmail=?',
+    //     userEmail,
+    //     (err, data) => { 
+    //         // const authNum = user[0].authNum
+
+    //         if (data.length === 0 ) {
+    //             db.query(
+    //                 'INSERT AuthNum(`authNum`, `userEmail`,`count`) VALUES (?,?,?)',
+    //                 [authNum, userEmail, 1],
+    //                 (err, data) => {
+    //                     res.send({ msg: 'success' });
+    //                 },
+    //             );
+    //         } else if ( data[0].timeDiff > 5) {
+    //             db.query(
+    //                 'UPDATE AuthNum SET authNum=?, `updatedAt`=now(), `count`=1 WHERE userEmail=?',
+    //                 [authNum, userEmail],
+    //                 (err, data) => {
+    //                     res.send({ msg: 'success' });
+    //                 },
+    //             );
+
+    //         } else if (data[0].count < 3 && data[0].timeDiff <= 5) {
+    //             db.query(
+    //                 'UPDATE AuthNum SET authNum=?, `count`=count+1 WHERE userEmail=?',
+    //                 [authNum, userEmail],
+    //                 (err, data) => {
+    //                     res.send({ msg: 'success' });
+    //                 },
+    //             );
+    //         } else if (data[0].count === 3 && data[0].timeDiff <= 5) {
+    //             res.send({ msg: 'fail' });
+    //         }   
+    // });
+});
+
+
+
 
 //유저 프로필사진 삭제
 router.patch(

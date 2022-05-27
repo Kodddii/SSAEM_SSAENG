@@ -109,8 +109,8 @@ router.get('/getNoti', authMiddleware,(req,res)=>{
     const user = res.locals.user
     
     if(user.isTutor === 1){
-        const sql = 'SELECT * FROM TimeTable WHERE Tutor_userName=? ORDER BY createdAt DESC'
-        db.query(sql,user.userName,(err,data)=>{
+        const sql = 'SELECT * FROM TimeTable WHERE Tutor_userName=? AND (TutorNoti = ? OR TutorDel=?) ORDER BY createdAt DESC'
+        db.query(sql,[user.userName,1,1],(err,data)=>{
             if(err) console.log(err)
             else{
                 // const data  = data0.sort((a,b) => new moment(a.start).format('x') - new moment(b.start).format('x'))
@@ -118,8 +118,8 @@ router.get('/getNoti', authMiddleware,(req,res)=>{
             }
         })
     }else if(user.isTutor===0){
-        const sql = 'SELECT * FROM TimeTable WHERE Tutee_userName=? ORDER BY createdAt DESC'
-        db.query(sql,user.userName,(err,data)=>{
+        const sql = 'SELECT * FROM TimeTable WHERE Tutee_userName=? AND ( TuteeNoti = ? OR  TuteeDel=?) ORDER BY createdAt DESC'
+        db.query(sql,[user.userName,1,1],(err,data)=>{
             if(err) console.log(err);
             else{
                 // const data  = data0.sort((a,b) => new moment(a.start).format('x') - new moment(b.start).format('x'))
@@ -133,28 +133,62 @@ router.patch('/delNoti/',authMiddleware, (req,res)=>{
     const user = res.locals.user
     console.log(req.query)
     const {timeId} =req.query
-    const sql = 'UPDATE TimeTable SET noti = ?  WHERE timeId=? '
-    const answer = [0,parseInt(timeId)]
-    db.query(sql,answer, (err,data)=>{
-        if(err) console.log(err);
-        else{
-            res.status(200).send({msg:'update success!'});
-        }
-    }) 
+    if(user.isTutor===1){
+        const sql = 'UPDATE TimeTable SET TutorNoti = ?  WHERE timeId=? '
+        const answer = [0,parseInt(timeId)]
+        db.query(sql,answer, (err,data)=>{
+            if(err) {
+                console.log(err);
+                res.status(400).send({msg:'update failed'})
+            }
+            else{
+                res.status(200).send({msg:'update success!'});
+            }
+        }) 
+    }else if(user.isTutor===0){
+        const sql = 'UPDATE TimeTable SET TuteeNoti = ?  WHERE timeId=? '
+        const answer = [0,parseInt(timeId)]
+        db.query(sql,answer, (err,data)=>{
+            if(err) {
+                console.log(err);
+                res.status(400).send({msg:'update fail'})
+            }
+            else{
+                res.status(200).send({msg:'update success!'});
+            }
+        }) 
+    }
 })
 
 // 예약 취소하기
 router.patch('/delBooking/', authMiddleware,(req,res)=>{
     const user = res.locals.user
     const {timeId} = req.query
-    const sql = 'UPDATE TimeTable SET del = ? WHERE timeId =? '
-    const answer = [1,parseInt(timeId)]
-    db.query(sql, answer, (err,data)=>{
-        if(err) console.log(err);
-        else{
-            res.status(200).send({msg:'success'})
-        }
-    })
+    if(user.isTutor===1){
+        const sql = 'UPDATE TimeTable SET TuteeDel = ? WHERE timeId =? '
+        const answer = [1,parseInt(timeId)]
+        db.query(sql, answer, (err,data)=>{
+            if(err){
+                console.log(err);
+                res.status(400).send({msg:'fail'})
+            } 
+            else{
+                res.status(200).send({msg:'success'})
+            }
+        })
+    }else if(user.isTutor===0){
+        const sql = 'UPDATE TimeTable SET TutorDel = ? WHERE timeId =? '
+        const answer = [1,parseInt(timeId)]
+        db.query(sql, answer, (err,data)=>{
+            if(err){
+                console.log(err);
+                res.status(400).send({msg:'fail'})
+            } 
+            else{
+                res.status(200).send({msg:'success'})
+            }
+        })
+    }
 })
 
 // 예약 취소 삭제 확정

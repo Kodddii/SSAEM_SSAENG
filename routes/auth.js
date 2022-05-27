@@ -23,7 +23,7 @@ router.get(
     console.log("req 정보!!!!!!!!!!!!", req.user)
     const userEmail = req.user[0].userEmail
     const userName = req.user[0].userName
-    const token = jwt.sign({ userName }, process.env.JWT_SECRET)
+    const token = jwt.sign({ userEmail }, process.env.JWT_SECRET)
     console.log(userEmail, userName, token)
     // res.send({
     //   userEmail,
@@ -31,17 +31,20 @@ router.get(
     // });
     db.query(sql1, [userEmail], (err, data) => {
       if (data.length !== 0) {
-        res.send(token)
+        res.redirect('http://localhost:3000/kakaoUser?token='+token)
+        // res.send(token)
       } else {
         db.query(sql2, [userEmail], (err, data) => {
           if (data.length !== 0) {
-            res.send(token)
+            res.redirect('http://localhost:3000/kakaoUser?token='+token)
+            // res.send(token)
           } else {
             console.log('회원가입 XXXXXXXXX!!!')
-            res.send({
-              userEmail,
-              userName,
-            })
+            res.redirect('http://localhost:3000/kakaoUser?userEmail='+userEmail+'&userName='+userName)
+            // res.send({
+            //   userEmail,
+            //   userName,
+            // })
           }
         })
       }
@@ -60,21 +63,24 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
     console.log("req 정보!!!!!!!!!!!!", req.user)
     const userEmail = req.user[0].userEmail
     const userName = req.user[0].userName
-    const token = jwt.sign({ userName }, process.env.JWT_SECRET)
+    const token = jwt.sign({ userEmail }, process.env.JWT_SECRET)
     console.log(userEmail, userName, token)
     db.query(sql1, [userEmail], (err, data) => {
       if (data.length !== 0) {
-        res.send(token)
+        // res.send(token)
+        res.redirect('http://localhost:3000/googleUser?token='+token)
       } else {
         db.query(sql2, [userEmail], (err, data) => {
           if (data.length !== 0) {
-            res.send(token)
+            res.redirect('http://localhost:3000/googleUser?token='+token)
+            // res.send(token)
           } else {
             console.log('회원가입 XXXXXXXXX!!!')
-            res.send({
-              userEmail,
-              userName,
-            })
+            res.redirect('http://localhost:3000/googleUser?userEmail='+userEmail+'&userName='+userName)
+            // res.send({
+            //   userEmail,
+            //   userName,
+            // })
           }
         })
       }
