@@ -403,7 +403,6 @@ router.patch('/editUser', async (req, res) => {
       endTime,
       userEmail
     ];
-    console.log(2222222222222222222222222)
     bcrypt.hash(datas1[2], saltRounds, (err, hash) => {
     if (err){
       console.log(err)
@@ -436,7 +435,6 @@ router.patch('/editUser', async (req, res) => {
       endTime,
       userEmail
     ];
-    console.log(2222222222222222222222222)
     bcrypt.hash(datas1[2], saltRounds, (err, hash) => {
     if (err){
       console.log(err)
@@ -455,7 +453,7 @@ router.patch('/editUser', async (req, res) => {
 })
 
 
- //유저 프로필사진 업로드
+ //유저 프로필사진 수정
  router.post(
      '/editUser/profile',
      upload.single('userProfile'),
@@ -484,6 +482,35 @@ router.patch('/editUser', async (req, res) => {
            })
          }
          })
+
+//유저 프로필사진 삭제
+router.patch(
+  '/deleteProfile', async (req, res) => {
+         const {userEmail, isTutor} = req.body;
+         console.log(isTutor)
+         console.log(typeof isTutor)
+         if (isTutor === "1") {
+             const sql2 = 'UPDATE Tutor SET userProfile=? WHERE userEmail=?';
+             db.query(sql2, ["", userEmail], (err, row) => {
+               if (err) {
+                 console.log(err);
+               } else {
+                 res.status(200).send({msg: 'successfully deleted!!'});
+               }
+             });
+         } else {
+           const sql2 = 'UPDATE Tutee SET userProfile=? WHERE userEmail=?';
+           db.query(sql2, ["", userEmail], (err, row) => {
+             if (err) {
+                console.log(err);
+              } else {
+                res.status(200).send({msg: 'successfully deleted!!'});
+              }
+           })
+         }
+         })
+        
+
 
          
 
