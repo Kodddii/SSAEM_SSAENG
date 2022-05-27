@@ -25,6 +25,29 @@ const upload = multer({
     }),
 });
 
+//S3 이미지 삭제
+// const s3 = require('../config/s3');
+
+// s3.deleteObject(
+//   {
+//     Bucket: '버킷명',
+//     Key: '파일명',
+//   },
+//   function (err, data) {},
+// );
+// s3.deleteObject(
+//   {
+//     Bucket: process.env.BUCKET_NAME, // 사용자 버켓 이름
+//     Key: '/* 버켓 내 경로*/', //
+//   },
+//   (err, data) => {
+//     if (err) {
+//       throw err;
+//     }
+//     console.log(`s3 deleteObject: ${data.Location}`);
+//   },
+// );
+
 
 // const {Post, Hashtag} = require('../consfig.js');
 // const {isLoggedIn} = require('./middlewares');
