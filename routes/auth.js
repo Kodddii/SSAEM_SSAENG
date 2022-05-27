@@ -31,16 +31,16 @@ router.get(
     // });
     db.query(sql1, [userEmail], (err, data) => {
       if (data.length !== 0) {
-        res.redirect('https://hjg521.link/kakaoUser?token='+token)
+        res.redirect('https://friengls.com/kakaoUser?token='+token)
         // res.send(token)
       } else {
         db.query(sql2, [userEmail], (err, data) => {
           if (data.length !== 0) {
-            res.redirect('https://hjg521.link/kakaoUser?token='+token)
+            res.redirect('https://friengls.com/kakaoUser?token='+token)
             // res.send(token)
           } else {
             console.log('회원가입 XXXXXXXXX!!!')
-            res.redirect('https://hjg521.link/kakaoUser?userEmail='+userEmail+'&userName='+userName)
+            res.redirect('https://friengls.com/kakaoUser?userEmail='+userEmail+'&userName='+userName)
             // res.send({
             //   userEmail,
             //   userName,
@@ -68,15 +68,15 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
     db.query(sql1, [userEmail], (err, data) => {
       if (data.length !== 0) {
         // res.send(token)
-        res.redirect('https://hjg521.link/googleUser?token='+token)
+        res.redirect('https://friengls.com/googleUser?token='+token)
       } else {
         db.query(sql2, [userEmail], (err, data) => {
           if (data.length !== 0) {
-            res.redirect('https://hjg521.link/googleUser?token='+token)
+            res.redirect('https://friengls.com/googleUser?token='+token)
             // res.send(token)
           } else {
             console.log('회원가입 XXXXXXXXX!!!')
-            res.redirect('https://hjg521.link/googleUser?userEmail='+userEmail+'&userName='+userName)
+            res.redirect('https://friengls.com/googleUser?userEmail='+userEmail+'&userName='+userName)
             // res.send({
             //   userEmail,
             //   userName,
