@@ -12,7 +12,6 @@ const passportConfig = require('./passport');
 const peer = require("peer");
 const helmet = require("helmet");
 const {Server} = require("socket.io");
-
 const app = express();
 
 
@@ -28,11 +27,20 @@ passportConfig();
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
-
+const { ChainableTemporaryCredentials } = require("aws-sdk");
+const httpPort= 80;
+const httpServer = http.createServer(app);
+const io = new Server(httpServer, {
+	cors: {
+		origin: "*",
+		methods: [ "GET", "POST" ]
+	}
+});
+const chat = io.of('/chat')
 
 //////////////////////////////////////////////////////////////////
 // https 인증관련
-const httpPort= 80;
+
 // const httpsPort = 443;
 // const privateKey = fs.readFileSync(__dirname + '/jg-jg_shop.key', 'utf8');
 // const certificate = fs.readFileSync(__dirname + '/jg-jg_shop__crt.pem', 'utf8');
@@ -54,16 +62,11 @@ const httpPort= 80;
 //   ca: ca,
 // };
 
-const httpServer = http.createServer(app);
+
 // const httpsServer = https.createServer(credentials,app);
 
 // socket.io https 서버
-const io = new Server(httpServer, {
-	cors: {
-		origin: "*",
-		methods: [ "GET", "POST" ]
-	}
-});
+
 // /////////////////////////////////////////////////////////
 
 // //접속로그 확인
@@ -124,13 +127,47 @@ app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRo
 //   res.send('메인페이지 입니다!!!')
 // })
 
+// io.on('connection', (socket) => {
+// 	console.log(1)
+// 	socket.on('join-room', (roomId, userId) => {
+// 	// let rooms = io.sockets.adapter.rooms;
+// 	// let room = rooms.get(roomId)
+// 	console.log(2)
+// 	socket.join(roomId);
+// 	console.log(2.1)
+// 	io.to(roomId).emit('user-connected', userId);
+// 	console.log(2.2)
+	
+// 	socket.on('disconnect', () => {
+// 		console.log(3)
+// 		io.to(roomId).emit('user-disconnected', userId);
+// 		console.log(3.5)
+// 	});	
+// });
+// 	socket.on('send_message', (Data) => {
+// 		console.log(Data)
+// 		socket.to(Data.room).emit('receive_message',({autor:Data.author, message:Data.message}));
+// 		console.log(5)
+// 	});
+// 	// socket.disconnect();
+// });
+
 io.on('connection', (socket) => {
 	console.log(1)
 	socket.on('join-room', (roomId, userId) => {
-	// let rooms = io.sockets.adapter.rooms;
-	// let room = rooms.get(roomId)
-	console.log(2)
-	socket.join(roomId);
+	let rooms = io.sockets.adapter.rooms;
+	let room = rooms.get(roomName);
+	console.log(1)
+	if (room === undefined){
+		console.log(2)
+		socket.join(roomId);
+	}else if(room.size ===1){
+		console.log(3)
+		socket.join(roomId)
+	}else if(room.size >=2){
+		console.log(4)
+		return;
+	}
 	console.log(2.1)
 	io.to(roomId).emit('user-connected', userId);
 	console.log(2.2)
@@ -138,6 +175,7 @@ io.on('connection', (socket) => {
 	socket.on('disconnect', () => {
 		console.log(3)
 		io.to(roomId).emit('user-disconnected', userId);
+		socket.leave(roomId)
 		console.log(3.5)
 	});	
 	
@@ -148,8 +186,26 @@ io.on('connection', (socket) => {
 		socket.to(Data.room).emit('receive_message',({autor:Data.author, message:Data.message}));
 		console.log(5)
 	});
-	// socket.disconnect();
+	socket.disconnect();
 });
+
+
+// chat.on('connection',(socket)=>{
+// 	socket.on('send_message', (Data) => {
+// 		console.log(Data)
+// 		socket.to(Data.room).emit('receive_message',({autor:Data.author, message:Data.message}));
+// 		console.log(5)
+// 	});
+
+
+// })
+
+
+
+
+
+
+
 
 // io.on("connection", (socket) => {
 // 	console.log(1)
