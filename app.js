@@ -183,11 +183,11 @@ io.on('connection', (socket) => {
 	
 
 });
-	// socket.on('send_message', (Data) => {
-	// 	console.log(Data)
-	// 	socket.to(Data.room).emit('receive_message',({autor:Data.author, message:Data.message}));
-	// 	console.log(5)
-	// });
+	socket.on('send_message', (Data) => {
+		console.log(Data)
+		socket.to(Data.room).emit('receive_message',({autor:Data.author, message:Data.message}));
+		console.log(5)
+	});
 	
 });
 
