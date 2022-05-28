@@ -38,7 +38,7 @@ router.patch('/like',authMiddleware,(req,res)=>{
                 }
             })
             const sql2 = 'INSERT INTO `Like` (`Tutee_userName`,`Tutor_userName`) VALUES (?,?)'
-            const data2 = [userName,tutorName]
+            const data2 = [user.userName,tutorName]
             db.query(sql2, data2, (err2,rows2)=>{
                 if(err2){
                     res.status(400).send({msg:'fail'})
