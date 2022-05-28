@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config');
-const authMiddleware = require('../middlewares/auth-middleware')
-// const authMiddleare = require('../middlewares/auth');
-///
+const middleware = require('../middlewares/auth-middleware');
 
 // 리뷰 전체 불러오기(메인화면)
 router.get('/getReview', async (req, res) => {
@@ -39,14 +37,14 @@ router.get('/getReview/:tutor_userName', async (req, res) => {
 });
 
 // 리뷰 작성
-router.post('/addReview', authMiddleware, async (req, res) => {
+router.post('/addReview', middleware, async (req, res) => {
   const tutee_userName = res.locals.user.userName;
   const { userName, rate, text } = req.body;
   console.log(tutee_userName, req.body);
   const param = [userName, tutee_userName, rate, text];
   // console.log(param)
   db.query(
-    'INSERT INTO `Review`(`tutor_userName`, `tutee_userName`, `rate`, `text`) VALUES (?,?,?,?)',
+    'INSERT INTO `Review`(`Tutor_userName`, `Tutee_userName`, `rate`, `text`) VALUES (?,?,?,?)',
     param,
     (err, row) => {
       if (err) {
