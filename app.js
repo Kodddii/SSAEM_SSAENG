@@ -159,7 +159,7 @@ io.on('connection', (socket) => {
 	console.log(userId)
 	let rooms = io.sockets.adapter.rooms;
 	let room = rooms.get(roomId);
-	console.log(1)
+	
 	if (room === undefined){
 		console.log(2)
 		socket.join(roomId);
@@ -183,15 +183,15 @@ io.on('connection', (socket) => {
 	
 
 });
-	socket.on('send_message', (Data) => {
-		console.log(Data)
-		socket.to(Data.room).emit('receive_message',({autor:Data.author, message:Data.message}));
-		console.log(5)
-	});
-	socket.disconnect();
+	// socket.on('send_message', (Data) => {
+	// 	console.log(Data)
+	// 	socket.to(Data.room).emit('receive_message',({autor:Data.author, message:Data.message}));
+	// 	console.log(5)
+	// });
+	
 });
 
-
+// socket.disconnect();
 // chat.on('connection',(socket)=>{
 // 	socket.on('send_message', (Data) => {
 // 		console.log(Data)
