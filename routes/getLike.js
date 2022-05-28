@@ -188,7 +188,7 @@ router.get('/getTag', (req,res)=>{
             });
             const arr5 = arr4.filter(el => el.length>0)
 
-            const arr6 = arr5.slice(0,16)
+            const arr6 = arr5.slice(0,20)
             
             res.status(200).send(arr6)
         }
