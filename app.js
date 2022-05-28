@@ -156,7 +156,7 @@ io.on('connection', (socket) => {
 	console.log(1)
 	socket.on('join-room', (roomId, userId) => {
 	let rooms = io.sockets.adapter.rooms;
-	let room = rooms.get(roomName);
+	let room = rooms.get(roomId);
 	console.log(1)
 	if (room === undefined){
 		console.log(2)
