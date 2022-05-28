@@ -155,6 +155,8 @@ app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRo
 io.on('connection', (socket) => {
 	console.log(1)
 	socket.on('join-room', (roomId, userId) => {
+	console.log(roomId)
+	console.log(userId)
 	let rooms = io.sockets.adapter.rooms;
 	let room = rooms.get(roomId);
 	console.log(1)
