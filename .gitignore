@@ -191,3 +191,7 @@ build/
 /ca_bundle.crt
 /certificate.crt
 /private.key
+/front.js
+/front2.js
+/front3.js
+/chat.js

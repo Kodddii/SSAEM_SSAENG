@@ -33,7 +33,9 @@ const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
 	cors: {
 		origin: "*",
-		methods: [ "GET", "POST" ]
+		methods: [ "GET", "POST" ],
+		transports:['websocket'],
+		credentials:true
 	}
 });
 const chat = io.of('/chat')

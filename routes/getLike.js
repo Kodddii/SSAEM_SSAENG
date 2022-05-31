@@ -8,8 +8,6 @@ const { query } = require('../config');
 // Like
 router.patch('/like',authMiddleware,(req,res)=>{
     const user = res.locals.user
-    
-    console.log(req.body)
     const {tutorName} = req.body;
     if(user.isTutor===1){
         res.status(400).send({msg:'fail'})
@@ -93,8 +91,6 @@ router.patch('/unlike',authMiddleware,(req,res)=>{
     })
     const sql2 = 'DELETE FROM `Like` WHERE Tutee_userName=? AND Tutor_userName=?'
     // DELETE FROM [Table명] WHERE [Field명] = [조건 값]
-
-
     const data2 = [userName,tutorName]
     db.query(sql2, data2, (err2,rows2)=>{
         if(err2){

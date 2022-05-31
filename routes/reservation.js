@@ -17,8 +17,8 @@ router.post('/addBooking/:tutorName',(req,res)=>{
     const {end, start, userName} = req.body;
     console.log(req.body)
     console.log(req.params)
-    const start2 = start.replace(' (한국 표준시)','')
-    const end2= end.replace(' (한국 표준시)','')
+    const start2 = start.replace(' (대한한국 표준시)','')
+    const end2= end.replace(' (대한한국 표준시)','')
     const tutorName = req.params.tutorName
     const datas = [start2,end2,tutorName,userName]
     const sql0 = 'SELECT * FROM TimeTable WHERE start=? AND end=? AND Tutor_userName=? AND Tutee_userName=?'
