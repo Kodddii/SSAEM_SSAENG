@@ -36,7 +36,9 @@ const io = new Server(httpServer, {
 		methods: [ "GET", "POST" ],
 		transports:['websocket'],
 		credentials:true
-	}
+	},
+	allowEIO3:true,
+
 });
 const chat = io.of('/chat')
 
