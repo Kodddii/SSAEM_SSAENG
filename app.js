@@ -21,6 +21,7 @@ const getLikeRouter = require("./routes/getLike");
 const reviewRouter = require('./routes/review');
 const authRouter = require('./routes/auth');
 const translateRouter = require('./routes/translate');
+const proverbRouter = require('./routes/proverb')
 const requestMiddleware = (req, res, next) => { console.log( "ip:", req.ip, "domain:", req.rawHeaders[1], "method:", req.method, "Request URL:", req.originalUrl, "-", new Date() ); next(); };
 passportConfig();
 // app.set('port', 3000);
@@ -78,9 +79,10 @@ const chat = io.of('/chat')
 //   console.log("Request URL:", req.originalUrl, "-", new Date());
 //   next();
 // };
+app.use(cors());
 app.get("/abc", (req, res) => { res.status(200).json({ msg: "good" }); });
 //미들웨어
-app.use(cors());
+
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
   session({
@@ -122,7 +124,7 @@ app.use(requestMiddleware)
 // 	}
 //   })
 // //라우터 연결
-app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRouter, translateRouter);
+app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRouter, translateRouter, proverbRouter);
 
 // app.use(express.static("assets"));
 
