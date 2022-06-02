@@ -79,9 +79,10 @@ const chat = io.of('/chat')
 //   console.log("Request URL:", req.originalUrl, "-", new Date());
 //   next();
 // };
+app.use(cors());
 app.get("/abc", (req, res) => { res.status(200).json({ msg: "good" }); });
 //미들웨어
-app.use(cors());
+
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(
   session({
