@@ -183,6 +183,7 @@ io.on('connection', (socket) => {
 		io.to(roomId).emit('user-disconnected', userId);
 		socket.leave(roomId)
 		console.log(3.5)
+		socket.disconnect
 	});	
 	
 
