@@ -42,10 +42,8 @@ router.get('/proverb', async (req, res) => {
       const k = Math.floor(Math.random()*((100-0)+1))
       console.log(proverbList[k], k)
 
-      // return meanList;
       return {statusCode: 200, body: proverbList[k]}
     })
-    // .then(res => console.log(res));
   .then((result) => {
   res.status(result.statusCode).json(result.body)
   })  

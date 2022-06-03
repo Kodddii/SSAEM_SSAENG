@@ -17,9 +17,6 @@ module.exports = () => {
       */
       async (accessToken, refreshToken, profile, done) => {
         console.log('kakao profile', profile);
-        // console.log('Token', accessToken, refreshToken);
-        // console.log(profile._json && profile._json.kakao_account.email)
-        // const param = [profile._json && profile._json.kakao_account.email, profile.displayName, false]
         try {
           const sql1 = 'SELECT * FROM Tutee WHERE userEmail=?'
           const sql2 = 'SELECT * FROM Tutor WHERE userEmail=?'
