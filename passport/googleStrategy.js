@@ -12,7 +12,6 @@ module.exports = () => {
       async (access_token, refreshToken, profile, email, done) => {
         console.log('google profile : ', profile, email);
         console.log(email._json.email, email.displayName)
-        // const param = [email._json.email, email.displayName, false]
         try {
           const sql1 = 'SELECT * FROM Tutee WHERE userEmail=?'
           const sql2 = 'SELECT * FROM Tutor WHERE userEmail=?'
