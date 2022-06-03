@@ -31,7 +31,8 @@
 
 ## 📌 바로가기
 
-- <a href="https://friengls.com/"> 👉Friengls </a></br>
+- <a href="https://friengls.com/"> 👉 Friengls </a></br>
+- <a href="https://youtu.be/u_SaGn2HHXw"> 🎬 프로젝트 발표영상 </a></br>
 
 </br>
 
