@@ -43,6 +43,25 @@ const fs = require("fs")
 const http = require("http")
 const https = require("https")
 const SocketIO = require("socket.io")
+
+
+const rateLimit = require('express-rate-limit');
+
+// Create the rate limit rule
+const apiRequestLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 2, // limit each IP to 2 requests per windowMs
+    handler: function (req, res /*next*/) {
+        return res.status(429).json({
+            error: 'You sent too many requests. Please wait a while then try again',
+        });
+    },
+});
+
+// Use the limit rule as an application middleware
+app.use(apiRequestLimiter)
+
+
 // //////////////////////////////////////////////////////////////////
 // // https 인증관련
 // const httpPort= 80;
