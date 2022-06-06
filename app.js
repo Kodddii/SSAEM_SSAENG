@@ -12,7 +12,8 @@ const passportConfig = require('./passport');
 const peer = require("peer");
 const helmet = require("helmet");
 const {Server} = require("socket.io");
-
+const rateLimit = require('express-rate-limit');
+ 
 const app = express();
 
 
@@ -28,6 +29,18 @@ passportConfig();
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
+
+// Create the rate limit rule
+const apiRequestLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 10, // limit each IP to 2 requests per windowMs
+    handler: function (req, res /*next*/) {
+        return res.status(429).json({
+            error: 'You sent too many requests. Please wait a while then try again',
+        });
+    },
+});
+
 
 
 //////////////////////////////////////////////////////////////////
@@ -99,7 +112,8 @@ app.use(helmet());
 app.use(requestMiddleware)
 
 
-
+// Use the limit rule as an application middleware
+app.use(apiRequestLimiter)
 
 // https 인증관련
 // app.get('/.well-known/pki-validation/69DCB230704B206B1161AA5BC7E57864.txt', (req,res)=>{
