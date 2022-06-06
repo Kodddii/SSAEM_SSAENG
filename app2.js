@@ -14,7 +14,8 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportConfig = require('./passport');
 const reviewRouter = require('./routes/review');
-const authRouter = require('./routes/auth')
+const authRouter = require('./routes/auth');
+const proverbRouter = require('./routes/proverb')
 const app_low = express();
 const app = express();
 passportConfig();
@@ -108,7 +109,7 @@ app.use(express.urlencoded({ extended: false }));
 //  }
 //   })
 //라우터 연결
-app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRouter, translateRouter);
+app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRouter, translateRouter, proverbRouter);
 // app.use(express.static("assets"));
 app.get('/', function (req, res) {
   res.send('메인페이지 입니다!!!')

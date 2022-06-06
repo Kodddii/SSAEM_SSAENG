@@ -7,16 +7,19 @@ const { query } = require('../config');
 
 // Like
 router.patch('/like',authMiddleware,(req,res)=>{
-    const userName = res.locals.user.userName
-    console.log(req.body)
+    const user = res.locals.user
     const {tutorName} = req.body;
-    if(userName===tutorName) {
+    if(user.isTutor===1){
+        res.status(400).send({msg:'fail'})
+        return;
+    }
+    if(user.userName===tutorName) {
         res.status(400).send({msg:'fail'})
         return;
     }
     const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? AND Tutor_userName=?'
     const sql1 =  'UPDATE Tutor SET `like` = `like` + 1 WHERE userName=?'
-    const answerData = [userName, tutorName]
+    const answerData = [user.userName, tutorName]
     db.query(sql0, answerData , (err,data0)=>{
         if(err) {
             console.log(err)
@@ -33,7 +36,7 @@ router.patch('/like',authMiddleware,(req,res)=>{
                 }
             })
             const sql2 = 'INSERT INTO `Like` (`Tutee_userName`,`Tutor_userName`) VALUES (?,?)'
-            const data2 = [userName,tutorName]
+            const data2 = [user.userName,tutorName]
             db.query(sql2, data2, (err2,rows2)=>{
                 if(err2){
                     res.status(400).send({msg:'fail'})
@@ -88,8 +91,6 @@ router.patch('/unlike',authMiddleware,(req,res)=>{
     })
     const sql2 = 'DELETE FROM `Like` WHERE Tutee_userName=? AND Tutor_userName=?'
     // DELETE FROM [Table명] WHERE [Field명] = [조건 값]
-
-
     const data2 = [userName,tutorName]
     db.query(sql2, data2, (err2,rows2)=>{
         if(err2){
@@ -183,7 +184,7 @@ router.get('/getTag', (req,res)=>{
             });
             const arr5 = arr4.filter(el => el.length>0)
 
-            const arr6 = arr5.slice(0,8)
+            const arr6 = arr5.slice(0,20)
             
             res.status(200).send(arr6)
         }
@@ -248,7 +249,13 @@ router.get('/getLikeList',authMiddleware,(req,res)=>{
 })
 
 router.get('/isLike/:tutorName', authMiddleware,(req,res)=>{
+    
     const userName = res.locals.user.userName
+    const isTutor = res.locals.user.isTutor
+    if(isTutor === 1){
+        res.status(400).send({msg:'error'})
+        return;
+    }
     const {tutorName} = req.params
     const sql0 = 'SELECT * FROM `Like` WHERE Tutee_userName=? and Tutor_userName=?'
     const answerData = [ userName, tutorName ]
