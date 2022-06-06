@@ -45,6 +45,7 @@
     "node": "^17.7.2",
     "nodemailer": "^6.7.5",
     "nodemon": "^2.0.15",
+    "nth-check": "^2.1.1",
     "passport": "^0.5.2",
     "passport-google-oauth20": "^2.0.0",
     "passport-kakao": "^1.0.1",
