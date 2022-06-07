@@ -8,69 +8,71 @@ const db = require('../config');
 const moment = require("moment");
 const authMiddleware = require("../middlewares/auth-middleware");
 const { time } = require("console");
+
 moment.tz.setDefault("Asia/Seoul")
+
 
 
 // 예약
 router.post('/addBooking/:tutorName',(req,res)=>{
-    
     const {end, start, userName} = req.body;
-    console.log(req.body)
-    console.log(req.params)
-    const start2 = start.replace(' (대한한국 표준시)','')
-    const end2= end.replace(' (대한한국 표준시)','')
-    const tutorName = req.params.tutorName
-    const datas = [start2,end2,tutorName,userName]
-    const sql0 = 'SELECT * FROM TimeTable WHERE start=? AND end=? AND Tutor_userName=? AND Tutee_userName=?'
-    const sql = 'INSERT INTO TimeTable (`start`,`end`,`Tutor_userName`,`Tutee_userName`) VALUES (?,?,?,?)'
-    db.query(sql0 , datas, (err,rows)=>{
-        if(err){
-            console.log(err)
-        }else if (rows.length){
-            res.status(400).send({msg:'이미 예약되어있는 시간입니다.'})
-        }else if (!rows.length){
-            db.query(sql,datas,(err,rows)=>{
-                if (err) {
-                    console.log(err);
-                    res.status(400).send({ msg: 'fail' });
-                } else {
-                    res.status(201).send({ msg: 'success' });
-                }
-            })
+    try {
+        const bookingMoment = new moment()
+        const startMoment = moment(start)
+        const time = moment.duration(startMoment.diff(bookingMoment)).asMinutes()
+        console.log(time)
+        if(time<60){
+            res.status(400).send({msg:'수업시작 1시간 전까지만 예약가능합니다.'})
+            return;
         }
-    })
+        const start2 = start.replace(' (대한한국 표준시)','')
+        const end2= end.replace(' (대한한국 표준시)','')
+        const tutorName = req.params.tutorName
+        const datas = [start2,end2,tutorName,userName]
+        const sql0 = 'SELECT * FROM TimeTable WHERE start=? AND end=? AND Tutor_userName=? AND Tutee_userName=?'
+        const sql = 'INSERT INTO TimeTable (`start`,`end`,`Tutor_userName`,`Tutee_userName`) VALUES (?,?,?,?)'
+        const sqlUpdate = 'UPDATE Tutee SET `bookingCnt`= `bookingCnt`+1 WHERE userName=?'
+        const sqlSelectCnt = 'SELECT bookingCnt FROM Tutee WHERE userName=?'
+        const ansSql = userName
+        db.query(sqlSelectCnt , ansSql, (err,data)=>{
+            if(err) console.log(err)
+            else if(data[0].bookingCnt>5){
+                res.status(400).send({msg:'하루에 5타임이상 예약할수 없습니다.'})
+            }else{
+                db.query(sql0 , datas, (err,rows)=>{
+                    if(err){
+                        console.log(err)
+                    }else if (rows.length){
+                        res.status(400).send({msg:'이미 예약되어있는 시간입니다.'})
+                    }else if (!rows.length){
+                        db.query(sql,datas,(err,rows)=>{
+                            if (err) {
+                                console.log(err);
+                                res.status(400).send({ msg: 'fail' });
+                            } else {
+                                db.query(sqlUpdate,ansSql,(err,data)=>{
+                                    if(err){
+                                        console.log(err)
+                                    }else{
+                                        console.log('update success')
+                                    }
+                                })
+                                res.status(201).send({ msg: 'success' });
+                            }
+                        })
+                        
+                    }
+                })
+            }
+        })
+
+        
+    } catch (error) {
+        
+    }
+    
     
 })
-
-// router.post('/addBooking/:tutorName',(req,res)=>{
-    
-//     const {end, start, userName} = req.body;
-//     console.log(req.body)
-//     console.log(req.params)
-//     for(let x of data){
-//         const sql = 'SELECT * FROM TimeTable WHERE '
-//     }
-
-
-//     const start2 = start.replace(' (한국 표준시)','')
-//     const end2= end.replace(' (한국 표준시)','')
-//     const tutorName = req.params.tutorName
-//     const datas = [start2,end2,tutorName,userName]
-
-//     const sql = 'INSERT INTO TimeTable (`start`,`end`,`Tutor_userName`,`Tutee_userName`) VALUES (?,?,?,?)'
-
-//     db.query(sql,datas,(err,rows)=>{
-//         if (err) {
-//             console.log(err);
-//             res.status(400).send({ msg: 'fail' });
-//         } else {
-//             res.status(201).send({ msg: 'success' });
-//         }
-//     })
-// })
-
-
-
 
 
 //  예약된 리스트 불러오기 
@@ -165,27 +167,59 @@ router.patch('/delBooking/', authMiddleware,(req,res)=>{
     const user = res.locals.user
     const {timeId} = req.query
     if(user.isTutor===1){
-        const sql = 'UPDATE TimeTable SET TuteeDel = ? WHERE timeId =? '
-        const answer = [1,parseInt(timeId)]
-        db.query(sql, answer, (err,data)=>{
+        const sql0 = 'SELECT start FROM TimeTable WHERE timeID =?'
+        db.query(sql0, timeId, (err,data)=>{
             if(err){
-                console.log(err);
-                res.status(400).send({msg:'fail'})
-            } 
-            else{
-                res.status(200).send({msg:'success'})
+                console.log(err)
+                return;
             }
+            
+            const moment = require("moment")
+            const startTime=moment(data[0].start);
+            const cancelMoment = new moment();
+            const time = moment.duration(startTime.diff(cancelMoment)).asMinutes()
+            if(time<60){
+                res.status(400).send({msg:'예약취소는 한시간 전까지만 가능합니다.'})
+            }else if(time>=60){
+                const sql = 'UPDATE TimeTable SET TuteeDel = ? WHERE timeId =? '
+                const answer = [1,parseInt(timeId)]
+                db.query(sql, answer, (err,data)=>{
+                    if(err){
+                        console.log(err);
+                        res.status(400).send({msg:'fail'})
+                    } 
+                    else{
+                        res.status(200).send({msg:'success'})
+                    }
+                })
+            }    
         })
+        
     }else if(user.isTutor===0){
-        const sql = 'UPDATE TimeTable SET TutorDel = ? WHERE timeId =? '
-        const answer = [1,parseInt(timeId)]
-        db.query(sql, answer, (err,data)=>{
+        const sql0 = 'SELECT start FROM TimeTable WHERE timeID =?'
+        db.query(sql0,timeId, (err,data)=>{
             if(err){
                 console.log(err);
-                res.status(400).send({msg:'fail'})
-            } 
-            else{
-                res.status(200).send({msg:'success'})
+                res.status(400).send({msg:'에러입니다'})
+            }
+            const moment = require("moment")
+            const startTime=moment(data[0].start);
+            const cancelMoment = new moment();
+            const time = moment.duration(startTime.diff(cancelMoment)).asMinutes()
+            if(time<60){
+                res.status(400).send({msg:'예약취소는 한시간 전까지만 가능합니다.'})
+            }else if(time>=60){
+                const sql = 'UPDATE TimeTable SET TutorDel = ? WHERE timeId =? '
+                const answer = [1,parseInt(timeId)]
+                db.query(sql, answer, (err,data)=>{
+                    if(err){
+                        console.log(err);
+                        res.status(400).send({msg:'fail'})
+                    } 
+                    else{
+                        res.status(200).send({msg:'success'})
+                    }
+                })
             }
         })
     }

@@ -49,31 +49,6 @@ router.patch('/like',authMiddleware,(req,res)=>{
         }
     })
 
-
-
-
-    
-
-
-
-    // db.query(sql1,tutorName,(err,rows1)=>{
-    //     if(err){
-    //         console.log(err)
-    //     }else{
-    //         console.log('success')
-    //     }
-    // })
-    // const sql2 = 'INSERT INTO `Like` (`Tutee_userName`,`Tutor_userName`) VALUES (?,?)'
-    // const data2 = [userName,tutorName]
-    // db.query(sql2, data2, (err2,rows2)=>{
-    //     if(err2){
-    //         res.status(400).send({msg:'fail'})
-    //         console.log(err2)
-    //     }else{
-    //         res.status(200).send({msg:'success'})
-    //         console.log(rows2)
-    //     }
-    // })
 })
 
 // unlike
@@ -159,7 +134,7 @@ router.get('/getTutorTag/', (req,res)=>{
 
 })
 
-// getTag
+// getTag 튜터마다 갖고 있는 태그값들 랜덤으로 뿌려주기
 router.get('/getTag', (req,res)=>{
     const sql = 'SELECT tag FROM Tutor '
     db.query(sql,(err,data)=>{
@@ -170,20 +145,26 @@ router.get('/getTag', (req,res)=>{
             for (let x of data){
                 arr.push(x.tag)
             }
+            // tag값 하나씩 잘라주기
             let arr2 = arr.join(',').split(',')
             let arr3 =[]
+            // arr2 값들 하나씩 trim해서 새배열에 넣어주기
             for(let x of arr2){
-            arr3.push(x.trim())
-            }
+                arr3.push(x.trim())
+                }   
+            // 배열내 인자들 shuffle함수
             function shuffle(array) {
-            array.sort(() => Math.random() - 0.5);
-            }
+                array.sort(() => Math.random() - 0.5);
+                }
+            // shuffle
             shuffle(arr3)
+            // 배열내 중복값 제거
             const arr4 = arr3.filter((element, index) => {
                 return arr3.indexOf(element) === index;
             });
+            // 배열 내 length=0 인 인자들 제거
             const arr5 = arr4.filter(el => el.length>0)
-
+            // 배열에서 20개까지만 추출
             const arr6 = arr5.slice(0,20)
             
             res.status(200).send(arr6)
