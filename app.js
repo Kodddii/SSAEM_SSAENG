@@ -81,6 +81,7 @@ app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRo
 // WebRTC 시그널링
 io.on('connection', (socket) => {
 		socket.on('join-room', (roomId, userId) => {
+		// 방인원수 따라 join
 		let rooms = io.sockets.adapter.rooms;
 		let room = rooms.get(roomId);
 		if (room === undefined){
@@ -92,6 +93,7 @@ io.on('connection', (socket) => {
 		}
 		io.to(roomId).emit('user-connected', userId);
 		socket.on('disconnect', () => {
+			// 접속끊겼을때 방나가기
 			io.to(roomId).emit('user-disconnected', userId);
 			socket.leave(roomId)
 			io.in(roomId).disconnectSockets(true)
