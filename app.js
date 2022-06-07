@@ -12,6 +12,8 @@ const passportConfig = require('./passport');
 const peer = require("peer");
 const helmet = require("helmet");
 const {Server} = require("socket.io");
+const rateLimit = require('express-rate-limit');
+ 
 const app = express();
 
 // 라우터선언
@@ -28,7 +30,22 @@ passportConfig();
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
-const { ChainableTemporaryCredentials } = require("aws-sdk");
+
+// Create the rate limit rule
+const apiRequestLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 10, // limit each IP to 2 requests per windowMs
+    handler: function (req, res /*next*/) {
+        return res.status(429).json({
+            error: 'You sent too many requests. Please wait a while then try again',
+        });
+    },
+});
+
+
+
+//////////////////////////////////////////////////////////////////
+// https 인증관련
 const httpPort= 80;
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
@@ -73,7 +90,22 @@ app.use(helmet());
 app.use(requestMiddleware)
 
 
+// Use the limit rule as an application middleware
+app.use(apiRequestLimiter)
 
+// https 인증관련
+// app.get('/.well-known/pki-validation/69DCB230704B206B1161AA5BC7E57864.txt', (req,res)=>{
+// 	res.sendFile(__dirname + '/well-known/pki-validation/69DCB230704B206B1161AA5BC7E57864.txt')
+//   });
+// app_low.use((req,res,next)=>{
+// 	if(req.secure){
+// 	  next();
+// 	}else{
+// 	  const to = `https://${req.hostname}:${httpsPort}${req.url}`;
+// 	  console.log(to);
+// 	  res.redirect(to)
+// 	}
+//   })
 // //라우터 연결
 app.use("/", loginRouter, reservationRouter, getLikeRouter, authRouter, reviewRouter, translateRouter, proverbRouter);
 
