@@ -26,14 +26,14 @@ router.get(
     console.log(userEmail, userName, token)
     db.query(sql1, [userEmail], (err, data) => {
       if (data.length !== 0) {
-        res.redirect('https://friengls.com/kakaoUser?token='+token)
+        res.redirect('https://friengls.kr/kakaoUser?token='+token)
       } else {
         db.query(sql2, [userEmail], (err, data) => {
           if (data.length !== 0) {
-            res.redirect('https://friengls.com/kakaoUser?token='+token)
+            res.redirect('https://friengls.kr/kakaoUser?token='+token)
           } else {
             console.log('회원가입 XXXXXXXXX!!!')
-            res.redirect('https://friengls.com/kakaoUser?userEmail='+userEmail+'&userName='+userName)
+            res.redirect('https://friengls.kr/kakaoUser?userEmail='+userEmail+'&userName='+userName)
           }
         })
       }
@@ -55,14 +55,14 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
     console.log(userEmail, userName, token)
     db.query(sql1, [userEmail], (err, data) => {
       if (data.length !== 0) {
-        res.redirect('https://friengls.com/googleUser?token='+token)
+        res.redirect('https://friengls.kr/googleUser?token='+token)
       } else {
         db.query(sql2, [userEmail], (err, data) => {
           if (data.length !== 0) {
-            res.redirect('https://friengls.com/googleUser?token='+token)
+            res.redirect('https://friengls.kr/googleUser?token='+token)
           } else {
             console.log('회원가입 XXXXXXXXX!!!')
-            res.redirect('https://friengls.com/googleUser?userEmail='+userEmail+'&userName='+userName)
+            res.redirect('https://friengls.kr/googleUser?userEmail='+userEmail+'&userName='+userName)
           }
         })
       }
