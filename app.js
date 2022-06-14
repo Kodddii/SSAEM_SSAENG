@@ -134,5 +134,5 @@ io.on('connection', (socket) => {
 });
 
 httpServer.listen(httpPort, ()=>{
-	console.log('http서버가 켜졌어요 cicd확인');
+	console.log('http서버가 켜졌어요 cicd확인확인');
 });
