@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const { title } = require('process');
 
 router.get('/proverb', async (req, res) => {
   const getHtml = async () => {
