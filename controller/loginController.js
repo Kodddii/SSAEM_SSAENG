@@ -5,7 +5,6 @@ const res = require('express/lib/response');
 const middleware = require('../middlewares/auth-middleware');
 const {CLIENT_FOUND_ROWS} = require('mysql/lib/protocol/constants/client');
 const jwt = require('jsonwebtoken');
-const db = require('../config.js');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const upload = require('../modules/multer');
