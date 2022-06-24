@@ -1,4 +1,4 @@
-const db = require('../config');
+const db = require('../config.js');
 const express = require('express');
 const router = express.Router();
 const res = require('express/lib/response');
@@ -471,7 +471,7 @@ const mail = (req, res) => {
     });
 
     //메일 제목 설정
-    let mailOptions = await transporter.sendMail({
+    let mailOptions = transporter.sendMail({
         from: process.env.nodemailerUser,
         to: userEmail,
         subject: '[Friengls] 회원가입을 위한 인증번호를 입력해주세요.',
