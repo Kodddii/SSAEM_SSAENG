@@ -490,10 +490,10 @@ const mail = (req, res) => {
 
 // 이미지 파일 AWS S3 저장 image
 const image = (req, res) =>{
-    const file = await req.file;
+    const file = req.file;
   console.log(file);
   try {
-    const result = await file.location;
+    const result = file.location;
     console.log(result)
     res.status(200).json({ userProfile: result })
   } catch (e) {
