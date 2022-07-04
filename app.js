@@ -30,6 +30,7 @@ passportConfig();
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
+const res = require("express/lib/response");
 
 // Create the rate limit rule
 const apiRequestLimiter = rateLimit({
@@ -62,6 +63,7 @@ const chat = io.of('/chat')
 
 
 app.use(cors());
+app.get("/",(req,res)=>{res.sendFile(path.join(__dirname)+"loaderio-c796deb06d2adb9ef0dac78637799037.html")})
 app.get("/abc", (req, res) => { res.status(200).json({ msg: "good" }); });
 //미들웨어
 
