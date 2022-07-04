@@ -63,7 +63,9 @@ const chat = io.of('/chat')
 
 
 app.use(cors());
-app.get("/",(req,res)=>{res.sendFile(path.join(__dirname)+"loaderio-c796deb06d2adb9ef0dac78637799037.html")})
+app.get("/loaderio-c796deb06d2adb9ef0dac78637799037.txt",(req,res)=>{
+	res.sendFile(path.join(__dirname)+"loaderio-c796deb06d2adb9ef0dac78637799037.txt")
+})
 app.get("/abc", (req, res) => { res.status(200).json({ msg: "good" }); });
 //미들웨어
 
