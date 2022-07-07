@@ -60,6 +60,10 @@ const io = new Server(httpsServer, {
 //   console.log("Request URL:", req.originalUrl, "-", new Date());
 //   next();
 // };
+
+app.get("/loaderio-07aa130895e457bcaae352b3d9cc4e83.txt",(req,res)=>{
+	res.sendFile(__dirname+"/loaderio-07aa130895e457bcaae352b3d9cc4e83.txt")
+})
 app.get("/abc", (req, res) => { res.status(200).json({ msg: "good" }); });
 //미들웨어
 app.use(cors());
