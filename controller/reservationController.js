@@ -17,29 +17,32 @@ const addBooking = (req,res)=>{
         const start2 = start.replace(' (대한한국 표준시)','')
         const end2= end.replace(' (대한한국 표준시)','')
         const tutorName = req.params.tutorName
-        const datas = [start2,end2,tutorName,userName]
-        const sql0 = 'SELECT * FROM TimeTable WHERE start=? AND end=? AND Tutor_userName=? AND Tutee_userName=?'
-        const sql = 'INSERT INTO TimeTable (`start`,`end`,`Tutor_userName`,`Tutee_userName`) VALUES (?,?,?,?)'
-        const sqlUpdate = 'UPDATE Tutee SET `bookingCnt`= `bookingCnt`+1 WHERE userName=?'
+        const datasAddbooking = [start2,end2,tutorName,userName]
+        const sqlCheckTime = 'SELECT * FROM TimeTable WHERE start=? AND end=? AND Tutor_userName=? AND Tutee_userName=?'
+        const sqlAddBooking = 'INSERT INTO TimeTable (`start`,`end`,`Tutor_userName`,`Tutee_userName`) VALUES (?,?,?,?)'
+        const sqlUpdateCnt = 'UPDATE Tutee SET `bookingCnt`= `bookingCnt`+1 WHERE userName=?'
         const sqlSelectCnt = 'SELECT bookingCnt FROM Tutee WHERE userName=?'
         const ansSql = userName
+        // 하루 5회이상 예약했는지 체크
         db.query(sqlSelectCnt , ansSql, (err,data)=>{
             if(err) console.log(err)
             else if(data[0].bookingCnt>5){
                 res.status(400).send({msg:'하루에 5타임이상 예약할수 없습니다.'})
             }else{
-                db.query(sql0 , datas, (err,rows)=>{
+                // cnt 체크후 이미 예약되어있는 시간인지 확인
+                db.query(sqlCheckTime , datasAddbooking, (err,rows)=>{
                     if(err){
                         console.log(err)
                     }else if (rows.length){
                         res.status(400).send({msg:'이미 예약되어있는 시간입니다.'})
                     }else if (!rows.length){
-                        db.query(sql,datas,(err,rows)=>{
+                        // cnt체크, 시간중복 확인 후 db에 예약테이블 insert
+                        db.query(sqlAddBooking,datasAddbooking,(err,rows)=>{
                             if (err) {
                                 console.log(err);
                                 res.status(400).send({ msg: 'fail' });
                             } else {
-                                db.query(sqlUpdate,ansSql,(err,data)=>{
+                                db.query(sqlUpdateCnt,ansSql,(err,data)=>{
                                     if(err){
                                         console.log(err)
                                     }else{
@@ -69,12 +72,13 @@ const getBooking = (req,res)=>{
     const userName = req.query.userName
     console.log(typeof isTutor)
     if (isTutor==='1'){
+        // tutor일때 tutor table에서 예약리스트 불러오기
         const sql1 ='SELECT * FROM TimeTable WHERE Tutor_userName=? '
         db.query(sql1, userName, (err,datas0)=>{
         if(err) {
             console.log(err);
         }else{
-            // 데이터 값 시간순 정렬
+            // 예약리스트 데이터 값 시간순 정렬
             const datas1  = datas0.sort((a,b) => new moment(a.start).format('x') - new moment(b.start).format('x'))
             res.status(201).send({msg:'success', datas1})
         }
@@ -85,6 +89,7 @@ const getBooking = (req,res)=>{
         if(err) {
             console.log(err);
         }else{
+            // 예약리스트 데이터 값 시간순 정렬
             const datas1  = datas0.sort((a,b) => new moment(a.start).format('x') - new moment(b.start).format('x'))
             res.status(201).send({msg:'success', datas1})
         }
