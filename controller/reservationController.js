@@ -84,6 +84,7 @@ const getBooking = (req,res)=>{
         }
     })
     }else if(isTutor==='0'){
+        // tutee 일때 tutee table에서 예약리스트 불러오기
         const sql2 ='SELECT * FROM TimeTable WHERE Tutee_userName=?'
         db.query(sql2, userName, (err,datas0)=>{
         if(err) {
@@ -98,9 +99,10 @@ const getBooking = (req,res)=>{
 }
 
 // 알림용 예약리스트 불러오기
+// Noti = 1 or Del = 1 인 데이터 불러오기
 const getNoti = (req,res)=>{
     const user = res.locals.user
-    
+    // 튜터 알림리스트
     if(user.isTutor === 1){
         const sql = 'SELECT * FROM TimeTable WHERE Tutor_userName=? AND (TutorNoti = ? OR TutorDel=?) ORDER BY createdAt DESC'
         db.query(sql,[user.userName,1,1],(err,data)=>{
@@ -110,6 +112,7 @@ const getNoti = (req,res)=>{
                 res.status(200).send(data);
             }
         })
+    // 튜티 알림리스트
     }else if(user.isTutor===0){
         const sql = 'SELECT * FROM TimeTable WHERE Tutee_userName=? AND ( TuteeNoti = ? OR  TuteeDel=?) ORDER BY createdAt DESC'
         db.query(sql,[user.userName,1,1],(err,data)=>{
@@ -122,7 +125,7 @@ const getNoti = (req,res)=>{
     }
 }
 
-// 알림 리스트에서 삭제 
+// 알림 리스트에서 삭제 (확인된 알림 Noti = 0 으로 수정)
 const delNoti = (req,res)=>{
     const user = res.locals.user
     console.log(req.query)
@@ -165,7 +168,7 @@ const delBooking = (req,res)=>{
                 console.log(err)
                 return;
             }
-            
+            // 예약시간 한시간 전까지만 취소가능하도록 설정 
             const moment = require("moment")
             const startTime=moment(data[0].start);
             const cancelMoment = new moment();
@@ -173,6 +176,7 @@ const delBooking = (req,res)=>{
             if(time<60){
                 res.status(400).send({msg:'예약취소는 한시간 전까지만 가능합니다.'})
             }else if(time>=60){
+                // 한시간 전 확인 후 Del 값 1로 변경
                 const sql = 'UPDATE TimeTable SET TuteeDel = ? WHERE timeId =? '
                 const answer = [1,parseInt(timeId)]
                 db.query(sql, answer, (err,data)=>{
@@ -217,7 +221,7 @@ const delBooking = (req,res)=>{
     }
 }
 
-// 예약 취소 삭제 확정
+// 예약 취소 삭제 확정 (예약취소 알림 확인 후 db에서 제거)
 const delBookingCheck = (req,res)=>{
     const user = res.locals.user
     const {timeId} = req.query
@@ -230,7 +234,7 @@ const delBookingCheck = (req,res)=>{
     })
 }
 
-// 알림전체제거
+// 알림전체제거 (사용자 알림 전체 제거)
 const delAllNoti = (req,res)=>{
     const user = res.locals.user;
     console.log(req.body)
