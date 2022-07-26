@@ -1,3 +1,4 @@
+require("dotenv").config();
 const db = require('../config.js');
 const express = require('express');
 const router = express.Router();
@@ -392,28 +393,28 @@ const editUser = (req, res) => {
 // 유저 프로필사진 업로드 profile
 const profile = (req, res) => {
     const {userEmail, isTutor} = req.body;
-         console.log(isTutor)
-         console.log(typeof isTutor)
-         const userProfile = req.file?.location;
-         if (isTutor === "1") {
-             const sql2 = 'UPDATE Tutor SET userProfile=? WHERE userEmail=?';
-             db.query(sql2, [userProfile, userEmail], (err, row) => {
-               if (err) {
-                 console.log(err);
-               } else {
-                 res.status(200).send({msg: 'successfully updated!!'});
-               }
-             });
-         } else {
-           const sql2 = 'UPDATE Tutee SET userProfile=? WHERE userEmail=?';
-           db.query(sql2, [userProfile, userEmail], (err, row) => {
-             if (err) {
-                console.log(err);
-              } else {
-                res.status(200).send({msg: 'successfully updated!!'});
-              }
-           })
-         }
+    console.log(isTutor)
+    console.log(typeof isTutor)
+    const userProfile = req.file?.location;
+    if (isTutor === "1") {
+        const sql2 = 'UPDATE Tutor SET userProfile=? WHERE userEmail=?';
+        db.query(sql2, [userProfile, userEmail], (err, row) => {
+          if (err) {
+            console.log(err);
+          } else {
+            res.status(200).send({msg: 'successfully updated!!'});
+          }
+        });
+    } else {
+      const sql2 = 'UPDATE Tutee SET userProfile=? WHERE userEmail=?';
+      db.query(sql2, [userProfile, userEmail], (err, row) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.status(200).send({msg: 'successfully updated!!'});
+        }
+      })
+    }
 }
 
 // 유저 프로필사진 삭제
@@ -443,50 +444,49 @@ const deleteProfile = (req, res) => {
 }
 
 // nodeMailer발송 mail
-const mail = (req, res) => {
-    console.log(req.body)
-    const userEmail = req.body.userEmail;
-    let authNum = Math.random().toString().substr(2, 6);
-    let emailTemplete;
+const mail = async(req, res) => {
+  console.log(req.body)
+  const userEmail = req.body.userEmail;
+  let authNum = Math.random().toString().substr(2, 6);
+  let emailTemplete;
 
-    ejs.renderFile(__dirname + '/../template/authMail.ejs',
-        { authCode: authNum },
-        function (err, data) {
-            if (err) {
-                console.log(err);
-            }
-            emailTemplete = data;
-        },
-    );
+  ejs.renderFile(__dirname + '/../template/authMail.ejs',
+      { authCode: authNum },
+      function (err, data) {
+          if (err) {
+              console.log(err);
+          }
+          emailTemplete = data;
+      },
+  );
 
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
-        auth: {
-            user: process.env.nodemailerUser,
-            pass: process.env.nodemailerPw,
-        },
-    });
-
-    //메일 제목 설정
-    let mailOptions = transporter.sendMail({
-        from: process.env.nodemailerUser,
-        to: userEmail,
-        subject: '[Friengls] 회원가입을 위한 인증번호를 입력해주세요.',
-        html: emailTemplete,
-    });
-
-     transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-          console.log(error);
-      }
-      console.log(info)
-      console.log("Finish sending email : " + info.response);
-      res.send(authNum);
-      transporter.close()
+  let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+          user: process.env.nodemailerUser,
+          pass: process.env.nodemailerPw,
+      },
   });
+
+  //메일 제목 설정
+  let mailOptions = await transporter.sendMail({
+      from: process.env.nodemailerUser,
+      to: userEmail,
+      subject: '[Friengls] 회원가입을 위한 인증번호를 입력해주세요.',
+      html: emailTemplete,
+  });
+
+   transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+        console.log(error);
+    }
+    console.log("Finish sending email : " + info.response);
+    res.send(authNum);
+    transporter.close()
+});
 }
 
 // 이미지 파일 AWS S3 저장 image

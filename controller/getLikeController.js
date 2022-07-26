@@ -5,6 +5,7 @@ const db = require('../config');
 const like = (req,res)=>{
     const user = res.locals.user
     const {tutorName} = req.body;
+    // Tutor는 like 불가
     if(user.isTutor===1){
         res.status(400).send({msg:'fail'})
         return;
