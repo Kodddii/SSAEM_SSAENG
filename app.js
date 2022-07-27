@@ -55,6 +55,8 @@ const io = new Server(httpServer, {
 		methods: [ "GET", "POST" ],
 		transports:['websocket'],
 		credentials:true
+		// cors 인증서 사용 : origin 다른 resource 일때 
+		// cors문제로 인해 쿠키가 없으므로 쿠키를 헤더에 넣어주는것
 	},
 	allowEIO3:true,
 
